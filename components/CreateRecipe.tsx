@@ -68,6 +68,7 @@ export default function CreateRecipe() {
             Alert.alert("No recipe found");
             return;
         }
+        //parsing into json.
         const JSONContent = JSON.parse(content);
         console.log("AI Response:", JSONContent);
 
