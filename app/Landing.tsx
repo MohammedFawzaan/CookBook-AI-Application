@@ -1,9 +1,13 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, Image, TouchableOpacity, Button } from 'react-native'
 import React from 'react'
 import { Marquee } from '@animatereactnative/marquee'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { useLogto } from '@logto/rn'
 
 export default function Landing() {
+
+    const { signIn, signOut, isAuthenticated } = useLogto();
+
     const imageList = [
         require('./../assets/images/1.jpg'),
         require('./../assets/images/c1.jpg'),
@@ -15,9 +19,6 @@ export default function Landing() {
         require('./../assets/images/5.jpg'),
         require('./../assets/images/6.jpg'),
     ]
-    const handleSubmit = () => {
-        console.log('button clicked');
-    }
     return (
         <GestureHandlerRootView>
             <View style={styles.container}>
@@ -60,10 +61,11 @@ export default function Landing() {
             </View>
             <View style={styles.container2}>
                 <Text style={styles.text1}>AI CookBook | Find, Create, Make & Enjoy Delicious Food Recipe's</Text>
-                <TouchableOpacity onPress={() => handleSubmit()} style={styles.button}>
+                <TouchableOpacity onPress={async () => signIn('exp://192.168.109.156:8081')} style={styles.button}>
                     <Text style={styles.buttonText}>Get Started</Text>
                 </TouchableOpacity>
-                <Text style={styles.text2}>Lorem ipsum dolor sit amet consectetur adipisicing elit.</Text>
+                {/* <Text style={styles.text2}>Lorem ipsum dolor sit amet consectetur adipisicing elit.</Text> */}
+                <Button title="Sign out" onPress={async () => signOut()} />
             </View>
         </GestureHandlerRootView>
     )
