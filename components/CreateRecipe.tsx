@@ -72,8 +72,8 @@ export default function CreateRecipe() {
         const JSONContent = JSON.parse(content);
         console.log("AI Response:", JSONContent);
 
-        console.log("AI ImagePrompt:", JSONContent?.imagePrompt);
-        await generateAiImage(JSONContent?.imagePrompt);
+        // console.log("AI ImagePrompt:", JSONContent?.imagePrompt);
+        // await generateAiImage(JSONContent?.imagePrompt);
 
         setOpenLoading(false);
     }
