@@ -59,7 +59,7 @@ export default function Landing() {
             </View>
             <View style={styles.container2}>
                 <Text style={styles.text1}>AI CookBook | Find, Create, Make & Enjoy Delicious Food Recipe's</Text>
-                <TouchableOpacity onPress={() => router.push('./Home')} style={styles.button}>
+                <TouchableOpacity onPress={() => router.push('/(tabs)/Home')} style={styles.button}>
                     <Text style={styles.buttonText}>Get Started</Text>
                 </TouchableOpacity>
                 <Text style={styles.text2}>Lorem ipsum dolor sit amet consectetur adipisicing elit.</Text>

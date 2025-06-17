@@ -1,9 +1,11 @@
 import GlobalApi from "@/services/GlobalApi";
 import { useRef, useState } from "react";
-import { Text, View, TextInput, Button, Alert, StyleSheet, TouchableOpacity } from "react-native";
-import Prompt from "./../services/Prompt";
+import { Text, View, TextInput, Alert, StyleSheet, TouchableOpacity, Image } from "react-native";
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
+import Button from "./Button";
+import Prompt from "./../services/Prompt";
 import LoadingDialog from "./LoadingDialog";
+import { useRouter } from "expo-router";
 
 export default function CreateRecipe() {
     const [loading, setLoading] = useState(false);
@@ -13,12 +15,15 @@ export default function CreateRecipe() {
 
     const actionSheetRef = useRef<ActionSheetRef>(null);
 
+    const router = useRouter();
+
     const generateRecipe = async () => {
         if (!recipe) {
             Alert.alert("Please enter a food name");
             return;
         }
         console.log("Generating recipe for:", recipe);
+        setLoading(true);
         try {
             const result = await GlobalApi.AiModel(recipe + " " + Prompt.GENERATE_RECIPE_OPTION_PROMPT);
             const content = result.choices[0].message?.content;
@@ -53,7 +58,7 @@ export default function CreateRecipe() {
             console.error("Error:", error);
             Alert.alert("Failed to generate recipe");
         }
-
+        setLoading(false);
         actionSheetRef.current?.show();
     };
 
@@ -63,7 +68,7 @@ export default function CreateRecipe() {
 
         const PROMPT = "RecipeName:" + option.recipeName + "Description" + option?.description + Prompt.GENERATE_COMPLETE_RECIPE_PROMPT;
         const result = await GlobalApi.AiModel(PROMPT);
-        const content:any = result.choices[0].message?.content;
+        const content: any = result.choices[0].message?.content;
         if (!content) {
             Alert.alert("No recipe found");
             return;
@@ -72,9 +77,12 @@ export default function CreateRecipe() {
         const JSONContent = JSON.parse(content);
         console.log("AI Response:", JSONContent);
 
+        router.push('/RecipeDetails');
+
         // console.log("AI ImagePrompt:", JSONContent?.imagePrompt);
         // await generateAiImage(JSONContent?.imagePrompt);
 
+        setRecipe('');
         setOpenLoading(false);
     }
 
@@ -88,22 +96,23 @@ export default function CreateRecipe() {
     }
 
     return (
-        <View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 20 }}>
+        <View style={styles.container}>
+            <View style={styles.container1}>
+                <Image source={require('./../assets/images/pan.gif')} style={styles.image} />
+                <Text style={styles.heading}>Your AI Powered Kitchen Companion</Text>
+            </View>
             <TextInput
-                placeholder="Enter food name"
+                placeholder="Which Cooking Recipe Do You Want"
+                multiline={true}
+                numberOfLines={2}
                 value={recipe}
                 onChangeText={setRecipe}
-                style={{
-                    borderWidth: 1,
-                    borderColor: "#ccc",
-                    padding: 10,
-                    width: "100%",
-                    marginBottom: 10,
-                    borderRadius: 5,
-                }}
+                style={styles.textInput}
             />
-            <Button title="Generate" onPress={generateRecipe} />
+            <Button label={'Generate Recipe'} onPress={generateRecipe} iconName={'sparkles'} loading={loading}/>
+
             <LoadingDialog visible={openLoading} />
+
             <ActionSheet ref={actionSheetRef}>
                 <View style={styles.actionSheetContainer}>
                     <Text style={styles.text1}>Select Recipe</Text>
@@ -122,8 +131,27 @@ export default function CreateRecipe() {
 }
 
 const styles = StyleSheet.create({
+    container: {
+        // backgroundColor: "#cefad0",
+        padding: 15,
+        borderRadius: 30,
+    },
+    container1: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    heading: {
+        textAlign: 'center',
+        fontSize: 20,
+        fontWeight: 'bold',
+    },
     actionSheetContainer: {
         padding: 25
+    },
+    image: {
+        height: 65,
+        width: 65,
     },
     recipeOptionsView: {
         padding: 15,
@@ -143,5 +171,16 @@ const styles = StyleSheet.create({
     text3: {
         fontFamily: 'outfit',
         color: 'gray'
+    },
+    textInput: {
+        backgroundColor: 'white',
+        height: 120,
+        width: "100%",
+        marginVertical: 10,
+        padding: 15,
+        borderRadius: 15,
+        textAlignVertical: 'top',
+        fontWeight: 'semibold',
+        fontSize: 15,
     }
 });

@@ -1,0 +1,51 @@
+{
+  "AI Response": {
+    "calories": 1200,
+    "cookTime": 25,
+    "description": "A flavorful and hearty pizza topped with BBQ sauce, grilled chicken, red onions, and cilantro.",
+    "imagePrompt": "A delicious BBQ Chicken Pizza fresh out of the oven, topped with melted cheese and vibrant cilantro.",
+    "ingredients": [
+      {
+        "icon": "🍕",
+        "ingredient": "Pizza Dough",
+        "quantity": "1 ball"
+      },
+      {
+        "icon": "🍖",
+        "ingredient": "BBQ Sauce",
+        "quantity": "1/2 cup"
+      },
+      {
+        "icon": "🐔",
+        "ingredient": "Grilled Chicken",
+        "quantity": "1 cup, shredded"
+      },
+      {
+        "icon": "🧅",
+        "ingredient": "Red Onion",
+        "quantity": "1/2, thinly sliced"
+      },
+      {
+        "icon": "🌿",
+        "ingredient": "Cilantro",
+        "quantity": "2 tbsp, chopped"
+      },
+      {
+        "icon": "🧀",
+        "ingredient": "Mozzarella Cheese",
+        "quantity": "1 cup, shredded"
+      }
+    ],
+    "recipeName": "BBQ Chicken Pizza",
+    "serveTo": 4,
+    "steps": [
+      "Preheat oven to 425°F (220°C).",
+      "Roll out the pizza dough onto a baking sheet.",
+      "Spread BBQ sauce over the dough, leaving a small border for the crust.",
+      "Top with grilled chicken, red onion slices, and mozzarella cheese.",
+      "Bake in the preheated oven for 15-20 minutes, or until the crust is golden brown and the cheese is melted.",
+      "Remove from the oven and sprinkle with chopped cilantro.",
+      "Slice and serve hot. Enjoy your BBQ Chicken Pizza!"
+    ]
+  }
+}
