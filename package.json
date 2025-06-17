@@ -13,7 +13,6 @@
   "dependencies": {
     "@animatereactnative/marquee": "^0.5.2",
     "@expo/vector-icons": "^14.1.0",
-    "@logto/rn": "^1.0.1",
     "@react-native-async-storage/async-storage": "^1.24.0",
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/elements": "^2.3.8",
