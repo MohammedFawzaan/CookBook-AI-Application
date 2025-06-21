@@ -1,48 +1,51 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
+import Header from '@/components/Header';
 
 export default function RecipeDetail() {
   const { data } = useLocalSearchParams();
   const recipe = typeof data === 'string' ? JSON.parse(data) : JSON.parse(data[0]);
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>{recipe.recipeName}</Text>
-      <Text style={styles.description}>{recipe.description}</Text>
+      <ScrollView contentContainerStyle={styles.container}>
+        <Header />
+        <Text style={styles.title}>{recipe.recipeName}</Text>
+        <Text style={styles.description}>{recipe.description}</Text>
 
-      <View style={styles.tags}>
-        <Text style={styles.tag}>🔥 {recipe.calories} Cal</Text>
-        <Text style={styles.tag}>⏱️ {recipe.cookTime} Min</Text>
-        <Text style={styles.tag}>👥 Serves {recipe.serveTo}</Text>
-      </View>
-
-      <Text style={styles.sectionTitle}>Ingredients</Text>
-      {recipe.ingredients.map((item:any, index:any) => (
-        <Text key={index} style={styles.ingredient}>
-          {item.icon} {item.ingredient} - {item.quantity}
-        </Text>
-      ))}
-
-      <Text style={styles.sectionTitle}>Steps</Text>
-      {recipe.steps.map((step:any, index:any) => (
-        <View key={index} style={styles.stepBox}>
-          <Text style={styles.stepText}>{step}</Text>
+        <View style={styles.tags}>
+          <Text style={styles.tag}>🔥 {recipe.calories} Cal</Text>
+          <Text style={styles.tag}>⏱️ {recipe.cookTime} Min</Text>
+          <Text style={styles.tag}>👥 Serves {recipe.serveTo}</Text>
         </View>
-      ))}
-    </ScrollView>
+
+        <Text style={styles.sectionTitle}>Ingredients</Text>
+        {recipe.ingredients.map((item: any, index: any) => (
+          <Text key={index} style={styles.ingredient}>
+            {item.icon} {item.ingredient} - {item.quantity}
+          </Text>
+        ))}
+
+        <Text style={styles.sectionTitle}>Steps</Text>
+        {recipe.steps.map((step: any, index: any) => (
+          <View key={index} style={styles.stepBox}>
+            <Text style={styles.stepText}>{step}</Text>
+          </View>
+        ))}
+      </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 20,
+    margin: 7,
     padding: 20,
   },
   title: {
     fontSize: 26,
     fontWeight: 'bold',
     color: '#222',
+    marginTop: 5,
   },
   description: {
     fontSize: 17,
