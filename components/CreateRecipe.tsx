@@ -5,7 +5,7 @@ import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import Button from "./Button";
 import Prompt from "./../services/Prompt";
 import LoadingDialog from "./LoadingDialog";
-import { useRouter } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 
 export default function CreateRecipe() {
     const [loading, setLoading] = useState(false);
@@ -77,7 +77,12 @@ export default function CreateRecipe() {
         const JSONContent = JSON.parse(content);
         console.log("AI Response:", JSONContent);
 
-        router.push('/RecipeDetails');
+        router.push({
+            pathname: '/RecipeDetails',
+            params: {
+                data: JSON.stringify(JSONContent)
+            }
+        });
 
         // console.log("AI ImagePrompt:", JSONContent?.imagePrompt);
         // await generateAiImage(JSONContent?.imagePrompt);
@@ -109,7 +114,7 @@ export default function CreateRecipe() {
                 onChangeText={setRecipe}
                 style={styles.textInput}
             />
-            <Button label={'Generate Recipe'} onPress={generateRecipe} iconName={'sparkles'} loading={loading}/>
+            <Button label={'Generate Recipe'} onPress={generateRecipe} iconName={'sparkles'} loading={loading} />
 
             <LoadingDialog visible={openLoading} />
 
