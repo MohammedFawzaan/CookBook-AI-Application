@@ -8,7 +8,7 @@ const openai = new OpenAI({
 
 const AiModel = async (prompt: string) => {
   return await openai.chat.completions.create({
-    model: "openai/gpt-3.5-turbo",
+    model: "openai/gpt-3.5-turbo-16k",
     messages: [{ role: "user", content: prompt }],
   });
 };
