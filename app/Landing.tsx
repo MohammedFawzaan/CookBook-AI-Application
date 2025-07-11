@@ -4,7 +4,7 @@ import { Marquee } from '@animatereactnative/marquee'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { useRouter } from 'expo-router'
 
-export default function Landing() {
+export default function Landing() {//
     const imageList = [
         require('./../assets/images/1.jpg'),
         require('./../assets/images/c1.jpg'),
