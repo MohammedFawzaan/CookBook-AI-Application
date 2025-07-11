@@ -9,7 +9,7 @@ export default function Home() {
     <ScrollView style={styles.container}>
       <Header />
       <CreateRecipe />
-      {/* <CategoryList /> */}
+      <CategoryList />
     </ScrollView>
   )
 }

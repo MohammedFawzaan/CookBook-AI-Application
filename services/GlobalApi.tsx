@@ -1,6 +1,10 @@
 import OpenAI from "openai";
 import axios from 'axios';
 
+const axiosClient = axios.create({
+  baseURL:'http://192.168.232.156:1337/api',
+});
+
 const openai = new OpenAI({
   baseURL: "https://openrouter.ai/api/v1",
   apiKey: process.env.EXPO_PUBLIC_OPENROUTER_API_KEY,
@@ -29,4 +33,7 @@ const GenerateAiImage = async(input:string) => await axios.post(BASE_URL + '/api
   },
 })
 
-export default { AiModel, GenerateAiImage };
+const GetCategory = () => axiosClient.get('/categories?populate=*');
+const CreateNewRecipe = (data:any) => axiosClient.post('/recipes', {data:data}); 
+
+export default { AiModel, GenerateAiImage, GetCategory, CreateNewRecipe };

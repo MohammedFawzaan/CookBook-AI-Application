@@ -62,7 +62,7 @@ export default function Landing() {//
                 <TouchableOpacity onPress={() => router.push('/(tabs)/Home')} style={styles.button}>
                     <Text style={styles.buttonText}>Get Started</Text>
                 </TouchableOpacity>
-                <Text style={styles.text2}>Lorem ipsum dolor sit amet consectetur adipisicing elit.</Text>
+                <Text style={styles.text2}>Made with Mohammed Fawzaan &#x2665;.</Text>
             </View>
         </GestureHandlerRootView>
     )

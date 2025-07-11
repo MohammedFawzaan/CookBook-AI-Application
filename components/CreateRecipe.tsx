@@ -85,7 +85,10 @@ export default function CreateRecipe() {
         });
 
         // console.log("AI ImagePrompt:", JSONContent?.imagePrompt);
-        // await generateAiImage(JSONContent?.imagePrompt);
+        // const imageUrl = await generateAiImage(JSONContent?.imagePrompt);
+
+        const insertedRecordResult = await SaveToDb(JSONContent);
+        console.log(insertedRecordResult);
 
         setRecipe('');
         setOpenLoading(false);
@@ -94,10 +97,25 @@ export default function CreateRecipe() {
     const generateAiImage = async (imagePrompt: string) => {
         const result = await GlobalApi.GenerateAiImage(imagePrompt);
         console.log(result.data.image);
+        return result.data.image;
     }
 
-    const SaveToDb = () => {
+    const SaveToDb = async (content: any) => {
         // Saving Recipe's to DataBase
+        const data = {
+            recipeName: content.recipeName,
+            description: content.description,
+            calories: content.calories,
+            cookTime: content.cookTime,
+            serveTo: content.serveTo,
+            steps: content.steps,
+            ingredients: content.ingredients,
+            category: content.category,
+            recipeImage: "imageUrl"
+        };
+        setOpenLoading(false);
+        const result = await GlobalApi.CreateNewRecipe(data);
+        return result.data.data;
     }
 
     return (

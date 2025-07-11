@@ -1,51 +1,115 @@
 {
-  "AI Response": {
-    "calories": 1200,
-    "cookTime": 25,
-    "description": "A flavorful and hearty pizza topped with BBQ sauce, grilled chicken, red onions, and cilantro.",
-    "imagePrompt": "A delicious BBQ Chicken Pizza fresh out of the oven, topped with melted cheese and vibrant cilantro.",
-    "ingredients": [
-      {
-        "icon": "🍕",
-        "ingredient": "Pizza Dough",
-        "quantity": "1 ball"
-      },
-      {
-        "icon": "🍖",
-        "ingredient": "BBQ Sauce",
-        "quantity": "1/2 cup"
-      },
-      {
-        "icon": "🐔",
-        "ingredient": "Grilled Chicken",
-        "quantity": "1 cup, shredded"
-      },
-      {
-        "icon": "🧅",
-        "ingredient": "Red Onion",
-        "quantity": "1/2, thinly sliced"
-      },
-      {
-        "icon": "🌿",
-        "ingredient": "Cilantro",
-        "quantity": "2 tbsp, chopped"
-      },
-      {
-        "icon": "🧀",
-        "ingredient": "Mozzarella Cheese",
-        "quantity": "1 cup, shredded"
-      }
-    ],
-    "recipeName": "BBQ Chicken Pizza",
-    "serveTo": 4,
-    "steps": [
-      "Preheat oven to 425°F (220°C).",
-      "Roll out the pizza dough onto a baking sheet.",
-      "Spread BBQ sauce over the dough, leaving a small border for the crust.",
-      "Top with grilled chicken, red onion slices, and mozzarella cheese.",
-      "Bake in the preheated oven for 15-20 minutes, or until the crust is golden brown and the cheese is melted.",
-      "Remove from the oven and sprinkle with chopped cilantro.",
-      "Slice and serve hot. Enjoy your BBQ Chicken Pizza!"
-    ]
-  }
+"AI-Response": {
+  "calories": 450,
+  "category": [
+    "Dinner"
+  ],
+  "cookTime": 60,
+  "description": "A fiery and flavorful version of the classic haleem dish, perfect for spice lovers.",
+  "imagePrompt": "A delicious bowl of spicy haleem topped with fried onions and fresh coriander leaves.",
+  "ingredients": [
+    {
+      "icon": "🍗",
+      "ingredient": "Boneless chicken",
+      "quantity": "500g"
+    },
+    {
+      "icon": "🍖",
+      "ingredient": "Boneless mutton",
+      "quantity": "300g"
+    },
+    {
+      "icon": "🌰",
+      "ingredient": "Chana dal (split chickpeas)",
+      "quantity": "1 cup"
+    },
+    {
+      "icon": "🌱",
+      "ingredient": "Moong dal (split mung beans)",
+      "quantity": "1/2 cup"
+    },
+    {
+      "icon": "🧡",
+      "ingredient": "Masoor dal (red lentils)",
+      "quantity": "1/2 cup"
+    },
+    {
+      "icon": "🌾",
+      "ingredient": "Wheat grains",
+      "quantity": "1/2 cup"
+    },
+    {
+      "icon": "🧄",
+      "ingredient": "Ginger-garlic paste",
+      "quantity": "2 tbsp"
+    },
+    {
+      "icon": "🌶️",
+      "ingredient": "Red chili powder",
+      "quuantity": "2 tsp"
+    },
+    {
+      "icon": "🧅",
+      "ingredient": "Turmeric powder",
+      "quantity": "1 tsp"
+    },
+    {
+      "icon": "🌿",
+      "ingredient": "Coriander powder",
+      "quantity": "1 tbsp"
+    },
+    {
+      "icon": "🍛",
+      "ingredient": "Garam masala",
+      "quantity": "1 tsp"
+    },
+    {
+      "icon": "🌼",
+      "ingredient": "Cooking oil",
+      "quantity": "1/2 cup"
+    },
+    {
+      "icon": "🧈",
+      "ingredient": "Ghee",
+      "quantity": "1/4 cup"
+    },
+    {
+      "icon": "🧂",
+      "ingredient": "Salt",
+      "quantity": "to taste"
+    },
+    {
+      "icon": "💧",
+      "ingredient": "Water",
+      "quantity": "as needed"
+    },
+    {
+      "icon": "🧅",
+      "ingredient": "Fried onions",
+      "quantity": "for garnish"
+    },
+    {
+      "icon": "🌿",
+      "ingredient": "Chopped coriander leaves",
+      "quantity": "for garnish"
+    },
+    {
+      "icon": "🍋",
+      "ingredient": "Lemon wedges",
+      "quantity": "for serving"
+    }
+  ],
+  "recipeName": "Spicy Haleem 🔥",
+  "serveTo": 4,
+  "steps": [
+    "1. Wash and soak the dals and wheat grains for 2-3 hours.",
+    "2. In a pressure cooker, add the soaked dals, wheat grains, chicken, mutton, ginger-garlic paste, red chili powder, turmeric powder, coriander powder, garam masala, salt, and enough water to cover the ingredients.",
+    "3. Pressure cook for about 45 minutes until the meat is tender and the dals are well cooked.",
+    "4. Using a hand blender, blend the mixture to a smooth paste-like consistency.",
+    "5. In a separate pan, heat oil and ghee. Add the blended mixture and cook on low heat, stirring occasionally, until it thickens.",
+    "6. Adjust the consistency by adding more water if needed. Keep cooking until the desired thickness is reached.",
+    "7. Serve hot garnished with fried onions, chopped coriander leaves, and lemon wedges.",
+    "8. Enjoy the spicy haleem with naan or paratha!"
+  ]
+}
 }
