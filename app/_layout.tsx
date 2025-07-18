@@ -16,6 +16,18 @@ export default function RootLayout() {
           }}
         />
         <Stack.Screen
+          name="recipe-by-category/index"
+          options={{
+            headerTitle: ''
+          }}
+        />
+        <Stack.Screen
+          name="recipe-detail/index"
+          options={{
+            headerTitle: ''
+          }}
+        />
+        <Stack.Screen
           name="RecipeDetails"
           options={{
             headerShown: false

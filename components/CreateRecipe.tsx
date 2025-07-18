@@ -5,7 +5,7 @@ import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import Button from "./Button";
 import Prompt from "./../services/Prompt";
 import LoadingDialog from "./LoadingDialog";
-import { useNavigation, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 
 export default function CreateRecipe() {
     const [loading, setLoading] = useState(false);
@@ -103,16 +103,9 @@ export default function CreateRecipe() {
     const SaveToDb = async (content: any) => {
         // Saving Recipe's to DataBase
         const data = {
-            recipeName: content.recipeName,
-            description: content.description,
-            calories: content.calories,
-            cookTime: content.cookTime,
-            serveTo: content.serveTo,
-            steps: content.steps,
-            ingredients: content.ingredients,
-            category: content.category,
-            recipeImage: "imageUrl"
-        };
+            ...content,
+            recipeImage: "imagePrompt"
+        }
         setOpenLoading(false);
         const result = await GlobalApi.CreateNewRecipe(data);
         return result.data.data;
