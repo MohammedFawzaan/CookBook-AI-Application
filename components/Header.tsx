@@ -21,7 +21,7 @@ export default function Header() {
   );
 }
 
-const styles = StyleSheet.create({ 
+const styles = StyleSheet.create({
   container: {
     top: 0,
     display: 'flex',

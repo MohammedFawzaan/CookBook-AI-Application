@@ -78,10 +78,10 @@ export default function CreateRecipe() {
         console.log("AI Response:", JSONContent);
 
         router.push({
-            pathname: '/RecipeDetails',
-            params: {
-                data: JSON.stringify(JSONContent)
-            }
+          pathname: '/recipe-detail',
+          params: {
+            recipeData: JSON.stringify(JSONContent)
+          }
         });
 
         // console.log("AI ImagePrompt:", JSONContent?.imagePrompt);

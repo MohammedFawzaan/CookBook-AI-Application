@@ -9,7 +9,6 @@ export default function RecipeDetail() {
 
   return (
       <ScrollView contentContainerStyle={styles.container}>
-        <Header />
         <Text style={styles.title}>{recipe.recipeName}</Text>
         <Text style={styles.description}>{recipe.description}</Text>
 
@@ -37,62 +36,63 @@ export default function RecipeDetail() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    margin: 7,
-    padding: 20,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    color: '#222',
-    marginTop: 5,
-  },
-  description: {
-    fontSize: 17,
-    fontWeight: 'semibold',
-    color: '#555',
-    marginVertical: 15,
-  },
-  tags: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 8,
-  },
-  tag: {
-    backgroundColor: '#e2f5e5',
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: 8,
-    fontSize: 13,
-    color: '#333',
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginVertical: 12,
-    color: '#222',
-  },
-  ingredient: {
-    fontSize: 15,
-    marginBottom: 6,
-    color: '#444',
-  },
-  stepBox: {
-    flexDirection: 'row',
-    backgroundColor: '#f8f8f8',
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 10,
-    alignItems: 'flex-start',
-  },
-  stepNumber: {
-    fontWeight: 'bold',
-    marginRight: 10,
-    color: '#000',
-  },
-  stepText: {
-    flex: 1,
-    fontSize: 15,
-    color: '#333',
-  },
+    container: {
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        backgroundColor: 'white'
+    },
+    title: {
+        fontSize: 26,
+        fontWeight: 'bold',
+        color: '#222',
+        marginTop: 5,
+    },
+    description: {
+        fontSize: 20,
+        fontWeight: 'semibold',
+        color: '#555',
+        marginVertical: 15,
+    },
+    tags: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        gap: 8,
+    },
+    tag: {
+        backgroundColor: '#e2f5e5',
+        paddingVertical: 6,
+        paddingHorizontal: 10,
+        borderRadius: 8,
+        fontSize: 16,
+        color: '#333',
+    },
+    sectionTitle: {
+        fontSize: 22,
+        fontWeight: 'bold',
+        marginVertical: 12,
+        color: '#222',
+    },
+    ingredient: {
+        fontSize: 16,
+        marginBottom: 7,
+        color: '#444',
+    },
+    stepBox: {
+        flexDirection: 'row',
+        backgroundColor: '#f8f8f8',
+        borderRadius: 10,
+        padding: 12,
+        marginBottom: 10,
+        alignItems: 'flex-start',
+    },
+    stepNumber: {
+        fontWeight: 'bold',
+        marginRight: 10,
+        color: '#000',
+    },
+    stepText: {
+        flex: 1,
+        fontSize: 15,
+        color: '#333',
+    },
 });

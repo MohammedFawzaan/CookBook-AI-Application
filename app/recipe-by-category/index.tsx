@@ -1,13 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { View, Text, StyleSheet, FlatList } from 'react-native'
 import { useLocalSearchParams } from 'expo-router'
 import GlobalApi from '@/services/GlobalApi';
 import RecipeCard from '@/components/RecipeCard';
 
 export default function RecipeByCategory() {
-
   const { categoryName } = useLocalSearchParams();
   const [recipeList, setRecipeList] = React.useState([]);
+  const [loading, setLoading] = useState(false);
 
   React.useEffect(() => {
     GetRecipeByCategory();
@@ -15,17 +15,21 @@ export default function RecipeByCategory() {
 
   // fetch recipes by category
   const GetRecipeByCategory = async () => {
+    setLoading(true);
     const result = await GlobalApi.GetRecipeByCategory(categoryName as string);
     console.log(result.data.data);
     setRecipeList(result?.data?.data);
+    setLoading(false);
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text1} >Browse {categoryName} Recipes</Text>
+      <Text style={styles.text1} >{categoryName} Recipes</Text>
       <FlatList 
         data={recipeList}
         numColumns={2}
+        refreshing={loading}
+        onRefresh={GetRecipeByCategory}
         showsVerticalScrollIndicator={false}
         renderItem={({item, index}) => (
             <View style={styles.card}>
@@ -39,7 +43,8 @@ export default function RecipeByCategory() {
 
 const styles = StyleSheet.create({
     container: {
-        padding: 20,
+        paddingVertical: 15,
+        paddingHorizontal: 20,
         backgroundColor: 'white',
         height: '100%'
     },

@@ -24,13 +24,13 @@ export default function RootLayout() {
         <Stack.Screen
           name="recipe-detail/index"
           options={{
-            headerTitle: ''
+            headerTitle: 'Recipe Details'
           }}
         />
         <Stack.Screen
           name="RecipeDetails"
           options={{
-            headerShown: false
+            headerTitle: 'Recipe Details'
           }}
         />
       </Stack>
