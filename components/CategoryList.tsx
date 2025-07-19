@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ActivityIndicator } from 'react-native'
 import React from 'react'
 import GlobalApi from '@/services/GlobalApi'
 import { useRouter } from 'expo-router';
@@ -7,7 +7,7 @@ export default function CategoryList() {
 
   const router = useRouter();
 
-  // const [loading, setLoading] = React.useState();
+  const [loading, setLoading] = React.useState(true);
   const [categoryList, setCategoryList] = React.useState([]);
 
   React.useEffect(() => {
@@ -15,9 +15,23 @@ export default function CategoryList() {
   }, []);
 
   const GetCategory = async () => {
-    const result = await GlobalApi.GetCategory();
-    // console.log(result.data.data);
-    setCategoryList(result?.data?.data);
+    try {
+      setLoading(true);
+      const result = await GlobalApi.GetCategory();
+      setCategoryList(result?.data?.data);
+    } catch(error) {
+      console.log("Failed to fetch recipes : ", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  if(loading) {
+    return (
+      <View style={styles.loader}>
+        <ActivityIndicator size="large" color="#4CAF50"/>
+      </View>
+    );
   }
 
   return (
@@ -35,7 +49,7 @@ export default function CategoryList() {
                 }
             })}
             style={styles.categoryContainer}>
-            <Image source={{ uri: item?.image?.url }} style={{ width: 40, height: 40 }} />
+            <Image source={{ uri: item?.image?.url }} style={{ width: 40, height: 40, borderRadius: 50 }} />
             <Text style={styles.categoryName}>{item?.name}</Text>
           </TouchableOpacity>
         )}
@@ -66,5 +80,8 @@ const styles = StyleSheet.create({
   },
   categoryName: {
     marginTop: 3
+  },
+  loader: {
+    padding: 50
   }
 });
