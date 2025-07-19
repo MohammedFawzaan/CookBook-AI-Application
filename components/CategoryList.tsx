@@ -7,6 +7,7 @@ export default function CategoryList() {
 
   const router = useRouter();
 
+  // const [loading, setLoading] = React.useState();
   const [categoryList, setCategoryList] = React.useState([]);
 
   React.useEffect(() => {
@@ -21,7 +22,7 @@ export default function CategoryList() {
 
   return (
     <View style={styles.container}>
-      {/* <Text style={styles.heading}>Category</Text> */}
+      <Text style={styles.heading}>Category</Text>
       <FlatList
         data={categoryList}
         numColumns={4}
@@ -47,10 +48,11 @@ export default function CategoryList() {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 15
+    // marginTop: 15
   },
   heading: {
-    fontSize: 20,
+    margin: 10,
+    fontSize: 23,
     fontWeight: 'bold',
     display: 'flex',
     alignItems: 'center',

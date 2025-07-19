@@ -16,7 +16,6 @@ export default function Header() {
             onValueChange={() => setIsEnabled(!isEnabled)}
         />
       </View>
-      {/* <View style={styles.line} /> */}
     </View>
   );
 }
@@ -32,7 +31,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
-    paddingVertical: 10,
   },
   container2: {
     display: 'flex',
@@ -49,12 +47,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
     fontWeight: 'bold',
-  },
-  line: {
-    height: 3,
-    width: '100%',
-    backgroundColor: 'black',
-    marginVertical: 5,
-    borderRadius: 2
   }
 });

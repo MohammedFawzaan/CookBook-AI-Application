@@ -148,9 +148,9 @@ export default function CreateRecipe() {
 
 const styles = StyleSheet.create({
     container: {
-        // backgroundColor: "#cefad0",
-        padding: 15,
-        borderRadius: 30,
+        // backgroundColor: "#9df3a1ff",
+        paddingHorizontal: 7,
+        borderRadius: 50,
     },
     container1: {
         display: 'flex',

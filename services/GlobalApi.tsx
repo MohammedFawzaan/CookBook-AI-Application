@@ -2,7 +2,7 @@ import OpenAI from "openai";
 import axios from 'axios';
 
 const axiosClient = axios.create({
-  baseURL:'http://192.168.252.156:1337/api',
+  baseURL:'http://192.168.232.156:1337/api',
 });
 
 const openai = new OpenAI({
@@ -35,6 +35,16 @@ const GenerateAiImage = async(input:string) => await axios.post(BASE_URL + '/api
 
 const GetCategory = () => axiosClient.get('/categories?populate=*');
 const CreateNewRecipe = (data:any) => axiosClient.post('/recipes', {data:data}); 
-const GetRecipeByCategory = (category: string) => axiosClient.get('/recipes?filters[category][$eq]=' + encodeURIComponent(category));
+const GetRecipeByCategory = (category: string) => axiosClient.get('/recipes?filters[category][$eq]=' + category);
+const GetAllRecipeList = () => axiosClient.get('/recipes?sort[0]=id:desc');
+const GetAllRecipesByLimit = (limit:number) => axiosClient.get('/recipes?sort[0]=id:desc&pagination[start]=1&pagination[limit]=' + limit);
 
-export default { AiModel, GenerateAiImage, GetCategory, CreateNewRecipe, GetRecipeByCategory };
+export default { 
+  AiModel, 
+  GenerateAiImage, 
+  GetCategory, 
+  CreateNewRecipe, 
+  GetRecipeByCategory, 
+  GetAllRecipeList, 
+  GetAllRecipesByLimit 
+};

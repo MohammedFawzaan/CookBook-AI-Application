@@ -16,7 +16,8 @@ export default function RecipeCard({ recipe }: any) {
           }
         });
       }}
-      style={styles.container}>
+      style={styles.container}
+    >
       {/* <Image 
         source={{uri: recipe?.recipeImage}}
         style={{
@@ -26,7 +27,7 @@ export default function RecipeCard({ recipe }: any) {
         }}
       /> */}
       <Image
-        source={require('../assets/images/NoRecipeImage.png')}
+        source={require('../assets/images/RecipeImage.png')}
         style={{
           width: '100%',
           height: 220,
@@ -35,8 +36,7 @@ export default function RecipeCard({ recipe }: any) {
       />
       <LinearGradient
         style={styles.linearGradient}
-        colors={['transparent', 'rgba(0,0,0,0.8)', 'rgba(0,0,0,0.8)', 'rgba(0,0,0,0.8)']}
-      >
+        colors={['transparent', 'rgba(0,0,0,0.8)', 'rgba(0,0,0,0.8)', 'rgba(0,0,0,0.8)']}>
         <View>
           <Text style={styles.text1} >{recipe?.recipeName}</Text>
         </View>

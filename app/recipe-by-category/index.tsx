@@ -5,40 +5,53 @@ import GlobalApi from '@/services/GlobalApi';
 import RecipeCard from '@/components/RecipeCard';
 
 export default function RecipeByCategory() {
-  const { categoryName } = useLocalSearchParams();
-  const [recipeList, setRecipeList] = React.useState([]);
-  const [loading, setLoading] = useState(false);
+    const { categoryName } = useLocalSearchParams();
+    const [recipeList, setRecipeList] = React.useState([]);
+    const [loading, setLoading] = useState(false);
 
-  React.useEffect(() => {
-    GetRecipeByCategory();
-  }, []);
+    React.useEffect(() => {
+        if (recipeList.length === 0) {
+            console.log("No recipes found");
+        } else {
+            GetRecipeByCategory();
+        }
+    }, []);
 
-  // fetch recipes by category
-  const GetRecipeByCategory = async () => {
-    setLoading(true);
-    const result = await GlobalApi.GetRecipeByCategory(categoryName as string);
-    console.log(result.data.data);
-    setRecipeList(result?.data?.data);
-    setLoading(false);
-  };
+    // fetch recipes by category
+    const GetRecipeByCategory = async () => {
+        setLoading(true);
+        const result = await GlobalApi.GetRecipeByCategory(categoryName as string);
+        console.log(result.data.data);
+        setRecipeList(result?.data?.data);
+        setLoading(false);
+    };
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.text1} >{categoryName} Recipes</Text>
-      <FlatList 
-        data={recipeList}
-        numColumns={2}
-        refreshing={loading}
-        onRefresh={GetRecipeByCategory}
-        showsVerticalScrollIndicator={false}
-        renderItem={({item, index}) => (
-            <View style={styles.card}>
-                <RecipeCard recipe={item} />
+    return (
+        <View style={styles.container}>
+            {recipeList.length === 0 ? (
+                <View>
+                    <Text style={styles.text1} >{categoryName} Recipes</Text>
+                    <Text>No Recipe Found</Text>
+                </View>
+            ) : (
+            <View>
+                <Text style={styles.text1} >{categoryName} Recipes</Text>
+                <FlatList
+                    data={recipeList}
+                    numColumns={2}
+                    refreshing={loading}
+                    onRefresh={GetRecipeByCategory}
+                    showsVerticalScrollIndicator={false}
+                    renderItem={({ item, index }) => (
+                        <View style={styles.card}>
+                            <RecipeCard recipe={item} />
+                        </View>
+                    )}
+                />
             </View>
-        )}
-      />
-    </View>
-  )
+            )}
+        </View>
+    )
 }
 
 const styles = StyleSheet.create({
