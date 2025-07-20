@@ -31,7 +31,7 @@ const GenerateAiImage = async(input:string) => await axios.post(BASE_URL + '/api
     'x-api-key': process.env.EXPO_PUBLIC_AIGURULAB_API_KEY, // Your API Key
     'Content-Type': 'application/json', // Content Type
   },
-})
+});
 
 const GetCategory = () => axiosClient.get('/categories?populate=*');
 const CreateNewRecipe = (data:any) => axiosClient.post('/recipes', {data:data}); 

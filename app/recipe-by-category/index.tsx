@@ -21,7 +21,6 @@ export default function RecipeByCategory() {
         try {
             setLoading(true);
             const result = await GlobalApi.GetRecipeByCategory(categoryName as string);
-            // console.log(result?.data?.data);
             setRecipeList(result?.data?.data || []);
         } catch (err) {
             console.error('Error fetching recipes:', err);

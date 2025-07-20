@@ -1,7 +1,7 @@
 import React from 'react'
 import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native'
 import GlobalApi from '@/services/GlobalApi'
-import RecipeCardHome from './RecipeCardHome';
+import RecipeCardHome from './RecipeCardHome'
 
 export default function LatestRecipes() {
   const [loading, setLoading] = React.useState(true);
@@ -11,7 +11,6 @@ export default function LatestRecipes() {
     try {
       setLoading(true);
       const result = await GlobalApi.GetAllRecipesByLimit(10);
-      console.log(result.data.data);
       setRecipeList(result.data.data);
     } catch(error) {
       console.log("Failed to fetch recipes : ", error);
@@ -38,6 +37,7 @@ export default function LatestRecipes() {
       <FlatList
         data={recipeList}
         horizontal={true}
+        showsHorizontalScrollIndicator={false}
         renderItem={({item, index}) => (
             <View>
                 <RecipeCardHome recipe={item} />

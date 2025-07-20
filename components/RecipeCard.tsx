@@ -18,20 +18,12 @@ export default function RecipeCard({ recipe }: any) {
       }}
       style={styles.container}
     >
-      {/* <Image 
-        source={{uri: recipe?.recipeImage}}
-        style={{
-            width: '100%',
-            height: 220,
-            borderRadius: 20
-        }}
-      /> */}
       <Image
-        source={require('../assets/images/RecipeImage.png')}
+        source={{ uri: recipe.recipeImage }}
         style={{
           width: '100%',
           height: 220,
-          borderRadius: 20
+          borderRadius: 20,
         }}
       />
       <LinearGradient

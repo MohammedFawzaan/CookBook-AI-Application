@@ -19,7 +19,7 @@ export default function RecipeCardHome({ recipe }: any) {
             style={styles.container}
         >
             <Image
-                source={require('../assets/images/RecipeImage.png')}
+                source={{ uri: recipe.recipeImage }}
                 style={{
                     width: 200,
                     height: 140,

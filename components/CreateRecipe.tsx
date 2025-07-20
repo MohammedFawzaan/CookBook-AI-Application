@@ -32,7 +32,6 @@ export default function CreateRecipe() {
                 Alert.alert("No recipe found");
                 return;
             }
-            console.log("AI Response:", content);
 
             // Split into individual recipes
             const recipeBlocks = content.split(/\d\.\s/).filter(Boolean); // split by numbered list
@@ -62,6 +61,11 @@ export default function CreateRecipe() {
         actionSheetRef.current?.show();
     };
 
+    const generateAiImage = async (imagePrompt: string) => {
+        const result = await GlobalApi.GenerateAiImage(imagePrompt);
+        return result.data.image;
+    };
+
     const generateCompleteRecipe = async (option: any) => {
         actionSheetRef.current?.hide();
         setOpenLoading(true);
@@ -73,43 +77,35 @@ export default function CreateRecipe() {
             Alert.alert("No recipe found");
             return;
         }
-        //parsing into json.
         const JSONContent = JSON.parse(content);
-        console.log("AI Response:", JSONContent);
+        const imageUrl = await generateAiImage(JSONContent?.imagePrompt);
+
+        JSONContent.recipeImage = imageUrl;
 
         router.push({
-          pathname: '/recipe-detail',
-          params: {
-            recipeData: JSON.stringify(JSONContent)
-          }
+            pathname: '/RecipeDetails',
+            params: {
+                recipeData: JSON.stringify(JSONContent)
+            }
         });
 
-        // console.log("AI ImagePrompt:", JSONContent?.imagePrompt);
-        // const imageUrl = await generateAiImage(JSONContent?.imagePrompt);
-
-        const insertedRecordResult = await SaveToDb(JSONContent);
-        console.log(insertedRecordResult);
+        await SaveToDb(JSONContent, imageUrl)
+            .then(() => console.log("Recipe Saved to DB"))
+            .catch((error) => console.log("Error in saving : ",error));
 
         setRecipe('');
         setOpenLoading(false);
-    }
+    };
 
-    const generateAiImage = async (imagePrompt: string) => {
-        const result = await GlobalApi.GenerateAiImage(imagePrompt);
-        console.log(result.data.image);
-        return result.data.image;
-    }
-
-    const SaveToDb = async (content: any) => {
-        // Saving Recipe's to DataBase
+    const SaveToDb = async (content: any, imageUrl: any) => {
         const data = {
             ...content,
-            recipeImage: "imagePrompt"
+            recipeImage: imageUrl
         }
         setOpenLoading(false);
         const result = await GlobalApi.CreateNewRecipe(data);
         return result.data.data;
-    }
+    };
 
     return (
         <View style={styles.container}>
