@@ -1,50 +1,71 @@
-# Welcome to your Expo app 👋
+<body>
+  <p align="center">
+     <img src="./assets/images/cookbooklogo.png" alt="App Icon" height="120">
+  </p>
+  <h1>🍽️ AI Recipe Generator App</h1>
+  <p><strong>A modern recipe application</strong> built with React Native and Strapi CMS that helps users can Create, Discover, View, and Save delicious recipes with beautiful UI and AI-generated content support.</p>
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+  <h2>✨ Features</h2>
+  <ul>
+    <li>💥 Create any recipe you want using AI </li>
+    <li>🔥 Browse recipes by categories (Breakfast, Lunch, Dinner, Dessert, etc.)</li>
+    <li>👁️ View All latest recipe's which other users have created </li>
+    <li>📋 View detailed recipe instructions and ingredients with steps</li>
+    <li>📦 Save recipes to your personal CookBook</li>
+  </ul>
+  
+  <h2>✨ Functionalities</h2>
+  <ul>
+    <li>🔐 Authentication (Google & Email/Password with Clerk)</li>
+    <li>💎 Modern, responsive, and clean UI design</li>
+    <li>🖼️ AI-generated images for recipes (using AI Guru Lab Tech)</li>
+  </ul>
 
-## Get started
+  <h2>🛠 Tech Stack</h2>
+  <ul>
+    <li><strong>Frontend:</strong> React Native (Expo, Expo Router)</li>
+    <li><strong>Backend CMS:</strong> Strapi CMS (Node.js)</li>
+    <li><strong>Database:</strong> Neon PostgreSQL</li>
+    <li><strong>Authentication:</strong> Clerk</li>
+    <li><strong>Image Generation:</strong> AI Guru Lab Tech</li>
+  </ul>
 
-1. Install dependencies
+  <h2>📸 Screenshots</h2>
+  <ul>
+    <li><img src="screenshots/home.png" alt="Home Screen" width="400"></li>
+    <li><img src="screenshots/recipe-detail.png" alt="Recipe Detail Screen" width="400"></li>
+    <li><img src="screenshots/category.png" alt="Category Screen" width="400"></li>
+  </ul>
 
-   ```bash
-   npm install
-   ```
+  <h2>🚀 Getting Started</h2>
+  <h3>📥 Installation</h3>
+  <pre><code>https://github.com/MohammedFawzaan/CookBook-AI-Application.git
+npm install</code></pre>
 
-2. Start the app
+  <h3>📱 Run the App</h3>
+  <pre><code>npx expo start</code></pre>
 
-   ```bash
-   npx expo start
-   ```
+  <h3>🔧 Backend Setup</h3>
+  <ol>
+    <li>Deploy <strong>Strapi CMS</strong> (locally or on render/vercel)</li>
+    <li>Configure environment variables for DB (Neon PostgreSQL)</li>
+    <li>Set up API routes in <code>/services/GlobalApi.ts</code></li>
+  </ol>
 
-In the output, you'll find options to open the app in a
+  <h3>🔑 Authentication Setup</h3>
+  <ol>
+    <li>Create a Clerk account and configure API keys</li>
+    <li>Update Clerk provider in the app</li>
+  </ol>
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+  <h2>🤝 Contribution</h2>
+  <p>Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.</p>
+  <pre><code>git checkout -b feature/AmazingFeature
+git commit -m 'Add some AmazingFeature'
+git push origin feature/AmazingFeature</code></pre>
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+  <h2>📄 License</h2>
+  <p align="center">Made with ❤️ by <a href="https://github.com/MohammedFawzaan">MohammedFawzaan</a></p>
+</body>
+</html>
 
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
