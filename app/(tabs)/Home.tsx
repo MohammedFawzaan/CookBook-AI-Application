@@ -1,11 +1,17 @@
-import { ScrollView, StyleSheet, FlatList } from 'react-native'
-import React from 'react'
+import { ScrollView, StyleSheet, FlatList } from 'react-native';
+import React from 'react';
 import CreateRecipe from "@/components/CreateRecipe";
 import Header from '@/components/Header';
 import CategoryList from '@/components/CategoryList';
 import LatestRecipes from '@/components/LatestRecipes';
+import { useUser } from "@clerk/clerk-expo";
 
 export default function Home() {
+  const { user } = useUser();
+  
+  // console.log("Clerk User ID:", user?.id);
+  // console.log("Clerk User Email:", user?.primaryEmailAddress?.emailAddress);
+
   return (
     <FlatList
       data={[]}

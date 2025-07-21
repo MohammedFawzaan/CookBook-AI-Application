@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { useSSO } from "@clerk/clerk-expo";
+import { useSSO, useUser } from "@clerk/clerk-expo";
 import { Alert } from "react-native";
 
-export const useClerkAuth = () => { // <--- Renamed
+export const useClerkAuth = () => {
     const [loading, setLoading] = useState(false);
     const { startSSOFlow } = useSSO();
 

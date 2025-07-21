@@ -6,6 +6,7 @@ import Button from "./Button";
 import Prompt from "./../services/Prompt";
 import LoadingDialog from "./LoadingDialog";
 import { useRouter } from "expo-router";
+import { useUser } from "@clerk/clerk-expo";
 
 export default function CreateRecipe() {
     const [loading, setLoading] = useState(false);
@@ -16,6 +17,7 @@ export default function CreateRecipe() {
     const actionSheetRef = useRef<ActionSheetRef>(null);
 
     const router = useRouter();
+    const { user } = useUser();
 
     const generateRecipe = async () => {
         if (!recipe) {
@@ -100,7 +102,8 @@ export default function CreateRecipe() {
     const SaveToDb = async (content: any, imageUrl: any) => {
         const data = {
             ...content,
-            recipeImage: imageUrl
+            recipeImage: imageUrl,
+            userEmail: user?.primaryEmailAddress?.emailAddress
         }
         setOpenLoading(false);
         const result = await GlobalApi.CreateNewRecipe(data);

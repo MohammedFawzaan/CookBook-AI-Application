@@ -1,22 +1,56 @@
-import { View, Text, StyleSheet } from 'react-native'
-import React from 'react'
+import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import GlobalApi from '@/services/GlobalApi'
+import { useUser } from '@clerk/clerk-expo'
+import RecipeCard from '@/components/RecipeCard'
 
 export default function Book() {
+
+  const { user } = useUser();
+
+  const [recipeList, setRecipeList] = React.useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    user && GetUserRecipeList();
+  }, [user]);
+
+  const GetUserRecipeList = async () => {
+    setLoading(true);
+    const result = await GlobalApi.GetUserCreatedRecipe(user?.primaryEmailAddress?.emailAddress || "");
+    setRecipeList(result.data.data);
+    setLoading(false);
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.heading} >Your CookBook</Text>
-      {/* <FlatList
-        data={recipeList}
-        numColumns={2}
-        refreshing={loading}
-        onRefresh={GetAllRecipesList}
-        showsVerticalScrollIndicator={false}
-        renderItem={({ item, index }) => (
-          <View style={styles.card}>
-            <RecipeCard recipe={item} />
-          </View>
-        )}
-      /> */}
+      {loading && recipeList.length === 0 ? (
+        <ActivityIndicator size="large" color="#4CAF50" style={{ marginTop: 20 }} />
+      ) : (
+        <FlatList
+          data={recipeList}
+          numColumns={2}
+          refreshing={loading}
+          onRefresh={GetUserRecipeList}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 50 }}
+          renderItem={({ item }) => (
+            <View style={styles.card}>
+              <RecipeCard recipe={item} />
+            </View>
+          )}
+          ListEmptyComponent={
+            !loading
+              ? (
+                <Text style={{ textAlign: 'center', marginTop: 50, color: '#888' }}>
+                  You Haven't Created any Recipe's Yet!
+                </Text>
+              )
+              : null
+          }
+        />
+      )}
     </View>
   )
 }
@@ -34,6 +68,6 @@ const styles = StyleSheet.create({
     margin: 7
   },
   card: {
-      flex: 1
+    flex: 1
   }
 });

@@ -64,8 +64,8 @@ export default function Landing() {
             <View style={styles.container2}>
                 <Text style={styles.text1}>AI CookBook | Find, Create, Make & Enjoy Delicious Food Recipe's</Text>
                 {isSignedIn ? (
-                    <TouchableOpacity onPress={() => router.push('/(tabs)/Home')} style={styles.button}>
-                        <Text style={styles.buttonText}>Get Started</Text>
+                    <TouchableOpacity onPress={() => {router.push('/(tabs)/Home'); console.log("Hello");}} style={styles.button}>
+                        <Text style={styles.buttonText}>Welcome Back</Text>
                     </TouchableOpacity>
                 ) : (
                     <TouchableOpacity
