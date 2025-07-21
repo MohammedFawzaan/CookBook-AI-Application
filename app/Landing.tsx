@@ -3,8 +3,10 @@ import React from 'react'
 import { Marquee } from '@animatereactnative/marquee'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { useRouter } from 'expo-router'
+import { useAuth } from '@clerk/clerk-expo'
+import { useClerkAuth } from '@/hooks/useClerkAuth'
 
-export default function Landing() {//
+export default function Landing() {
     const imageList = [
         require('./../assets/images/1.jpg'),
         require('./../assets/images/c1.jpg'),
@@ -17,6 +19,8 @@ export default function Landing() {//
         require('./../assets/images/6.jpg'),
     ]
     const router = useRouter();
+    const { isSignedIn } = useAuth();
+    const { loading, handleAuth } = useClerkAuth();
     return (
         <GestureHandlerRootView>
             <View style={styles.container}>
@@ -59,9 +63,23 @@ export default function Landing() {//
             </View>
             <View style={styles.container2}>
                 <Text style={styles.text1}>AI CookBook | Find, Create, Make & Enjoy Delicious Food Recipe's</Text>
-                <TouchableOpacity onPress={() => router.push('/(tabs)/Home')} style={styles.button}>
-                    <Text style={styles.buttonText}>Get Started</Text>
-                </TouchableOpacity>
+                {isSignedIn ? (
+                    <TouchableOpacity onPress={() => router.push('/(tabs)/Home')} style={styles.button}>
+                        <Text style={styles.buttonText}>Get Started</Text>
+                    </TouchableOpacity>
+                ) : (
+                    <TouchableOpacity
+                        onPress={async () => {
+                            await handleAuth('oauth_google');
+                            router.push('/(tabs)/Home');
+                        }}
+                        style={styles.button}
+                        disabled={loading}>
+                        <Text style={styles.buttonText}>
+                            {loading ? 'Signing In...' : 'Sign In'}
+                        </Text>
+                    </TouchableOpacity>
+                )}
                 <Text style={styles.text2}>Made with Mohammed Fawzaan &#x2665;.</Text>
             </View>
         </GestureHandlerRootView>
@@ -84,7 +102,7 @@ const styles = StyleSheet.create({
         borderRadius: 25
     },
     marqueeStyle: {
-        transform: [{rotate:'-4deg'}],
+        transform: [{ rotate: '-4deg' }],
         marginTop: 10
     },
     container2: {
