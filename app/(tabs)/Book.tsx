@@ -44,7 +44,7 @@ export default function Book() {
             !loading
               ? (
                 <Text style={{ textAlign: 'center', marginTop: 50, color: '#888' }}>
-                  You Haven't Created any Recipe's Yet!
+                  You haven't created any recipe's yet!
                 </Text>
               )
               : null

@@ -49,13 +49,11 @@ export default function RecipeByCategory() {
                 </View>
             )}
             ListEmptyComponent={
-                !loading
-                ? (
-                    <Text style={{ textAlign: 'center', marginTop: 50, color: '#888' }}>
+                !loading ?
+                (   <Text style={{ textAlign: 'center', marginTop: 50, color: '#888' }}>
                         No recipes found for "{categoryName}"
                     </Text>
-                )
-                : null
+                ) : null
             }
           />
         )}
