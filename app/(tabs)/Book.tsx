@@ -5,7 +5,6 @@ import { useUser } from '@clerk/clerk-expo'
 import RecipeCard from '@/components/RecipeCard'
 
 export default function Book() {
-
   const { user } = useUser();
 
   const [recipeList, setRecipeList] = React.useState([]);
@@ -24,7 +23,7 @@ export default function Book() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading} >Your CookBook</Text>
+      <Text style={styles.heading} >CookBook</Text>
       {loading && recipeList.length === 0 ? (
         <ActivityIndicator size="large" color="#4CAF50" style={{ marginTop: 20 }} />
       ) : (
@@ -41,13 +40,18 @@ export default function Book() {
             </View>
           )}
           ListEmptyComponent={
-            !loading
-              ? (
+            !loading ? (
+              <View>
+                <Text style={{
+                  fontWeight: 'normal',
+                  fontSize: 16,
+                  textAlign: 'center'
+                }}>The Recipe's which you have created display's here</Text>
                 <Text style={{ textAlign: 'center', marginTop: 50, color: '#888' }}>
-                  You haven't created any recipe's yet!
+                  You haven't created any recipe yet!
                 </Text>
-              )
-              : null
+              </View>
+            ) : null
           }
         />
       )}
@@ -63,9 +67,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   heading: {
-    fontSize: 30,
+    fontSize: 25,
     fontWeight: 'bold',
-    margin: 7
+    margin: 10
   },
   card: {
     flex: 1

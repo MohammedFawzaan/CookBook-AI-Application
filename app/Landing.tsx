@@ -9,14 +9,14 @@ import { useClerkAuth } from '@/hooks/useClerkAuth'
 export default function Landing() {
     const imageList = [
         require('./../assets/images/1.jpg'),
-        require('./../assets/images/c1.jpg'),
         require('./../assets/images/2.jpg'),
-        require('./../assets/images/c2.jpg'),
+        require('./../assets/images/c1.jpg'),
         require('./../assets/images/3.jpg'),
-        require('./../assets/images/c3.jpg'),
         require('./../assets/images/4.jpg'),
+        require('./../assets/images/c2.jpg'),
         require('./../assets/images/5.jpg'),
         require('./../assets/images/6.jpg'),
+        require('./../assets/images/c3.jpg'),
     ]
     const router = useRouter();
     const { isSignedIn } = useAuth();

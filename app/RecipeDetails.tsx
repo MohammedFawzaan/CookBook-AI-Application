@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     color: '#1b1b1b',
-    margin: 10,
+    margin: 8,
     fontFamily: 'System',
     letterSpacing: 0.5,
   },

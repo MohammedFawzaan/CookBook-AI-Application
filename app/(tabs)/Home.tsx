@@ -8,8 +8,6 @@ import { useUser } from "@clerk/clerk-expo";
 
 export default function Home() {
   const { user } = useUser();
-  
-  // console.log("Clerk User ID:", user?.id);
   // console.log("Clerk User Email:", user?.primaryEmailAddress?.emailAddress);
 
   return (

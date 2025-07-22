@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   heading: {
-    fontSize: 30,
+    fontSize: 25,
     fontWeight: 'bold',
     margin: 7,
   },

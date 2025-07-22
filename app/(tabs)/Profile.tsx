@@ -19,26 +19,39 @@ export default function Profile() {
 
   return (
     <View style={styles.container}>
-      <Image source={{ uri: user?.imageUrl }} style={{ width: 50, height: 50, borderRadius: 25 }} />
-      <Text style={styles.title}>👋 Hello, {user?.fullName || 'Guest'}</Text>
-      <TouchableOpacity style={styles.button} onPress={handleSignOut}>
-        <Text style={styles.buttonText}>Sign Out</Text>
-      </TouchableOpacity>
+      <Text style={styles.heading}>👋 {user?.fullName || 'Guest'}</Text>
+      <View style={styles.mainContainer}>
+        <Image source={{ uri: user?.imageUrl }} style={{ width: 60, height: 60, borderRadius: 30 }} />
+        <Text style={styles.title}>{user?.primaryEmailAddress?.emailAddress}</Text>
+        <TouchableOpacity style={styles.button} onPress={handleSignOut}>
+          <Text style={styles.buttonText}>Sign Out</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    height: '100%',
+    marginVertical: 20,
+    paddingVertical: 25,
+    paddingHorizontal: 15,
+  },
+  mainContainer: {
+    display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'white'
+    marginTop: 150
   },
-  title: {
+  heading: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 20,
+    margin: 10
+  },
+  title: {
+    fontSize: 18,
+    margin: 10,
   },
   button: {
     backgroundColor: '#f44336',

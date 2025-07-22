@@ -10,11 +10,11 @@ export default function Header() {
         <Text style={styles.text1}>CookBook AI</Text>
       </View>
       <View style={styles.container2}>
-        <Text>{isEnabled? "Veg" : "Non-Veg"}</Text>
+        {/* <Text>{isEnabled? "Veg" : "Non-Veg"}</Text>
         <Switch 
             value={isEnabled}
             onValueChange={() => setIsEnabled(!isEnabled)}
-        />
+        /> */}
       </View>
     </View>
   );
@@ -28,6 +28,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
   },
   container1: {
+    display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,

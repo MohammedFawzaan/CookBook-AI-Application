@@ -1,11 +1,17 @@
 import { Image, StyleSheet, View, ActivityIndicator } from 'react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Tabs, useRouter } from 'expo-router';
 import { useAuth } from '@clerk/clerk-expo';
 
 export default function TabLayout() {
     const { isLoaded, isSignedIn } = useAuth();
     const router = useRouter();
+
+    useEffect(() => {
+        if (isLoaded && !isSignedIn) {
+            router.replace('/Landing');
+        }
+    }, [isLoaded, isSignedIn]);
 
     if (!isLoaded) {
         return (
@@ -16,8 +22,7 @@ export default function TabLayout() {
     }
 
     if (!isSignedIn) {
-        router.replace('/Landing');
-        return null;
+        return null; // Wait for redirect
     }
 
     return (

@@ -117,7 +117,7 @@ export default function CreateRecipe() {
                 <Text style={styles.heading}>Your AI Powered Kitchen Companion</Text>
             </View>
             <TextInput
-                placeholder="Which Cooking Recipe Do You Want"
+                placeholder="Type a dish name & Let AI craft your Recipe."
                 multiline={true}
                 numberOfLines={2}
                 value={recipe}

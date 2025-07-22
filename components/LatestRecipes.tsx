@@ -33,7 +33,7 @@ export default function LatestRecipes() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text1}>LatestRecipes</Text>
+      <Text style={styles.text1}>Latest Recipes</Text>
       <FlatList
         data={recipeList}
         horizontal={true}
