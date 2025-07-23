@@ -2,7 +2,7 @@ import OpenAI from "openai";
 import axios from 'axios';
 
 const axiosClient = axios.create({
-  baseURL:'http://192.168.180.156:1337/api',
+  baseURL:'https://ai-recipe-generator-admin-w077.onrender.com/api',
 });
 
 const openai = new OpenAI({
