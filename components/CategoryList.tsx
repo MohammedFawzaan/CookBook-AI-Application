@@ -1,59 +1,54 @@
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
-import GlobalApi from '@/services/GlobalApi'
 import { useRouter } from 'expo-router';
 
+const Breakfast = require('../assets/images/breakfast.jpeg');
+const Lunch = require('../assets/images/lunch.jpeg');
+const Salad = require('../assets/images/salad.jpeg');
+const Drink = require('../assets/images/drink.png');
+const Fastfood = require('../assets/images/fastfood.webp');
+const Dinner = require('../assets/images/dinner.jpeg');
+const Dessert = require('../assets/images/dessert.avif');
+const Cake = require('../assets/images/cake.jpeg');
+
+const Categories = [
+  { name: 'Breakfast', imageSource: Breakfast },
+  { name: 'Lunch', imageSource: Lunch },
+  { name: 'Salad', imageSource: Salad },
+  { name: 'Drink', imageSource: Drink },
+  { name: 'Fastfood', imageSource: Fastfood },
+  { name: 'Dinner', imageSource: Dinner },
+  { name: 'Dessert', imageSource: Dessert },
+  { name: 'Cake', imageSource: Cake },
+];
+
 export default function CategoryList() {
-
   const router = useRouter();
-
-  const [loading, setLoading] = React.useState(true);
-  const [categoryList, setCategoryList] = React.useState([]);
-
-  React.useEffect(() => {
-    GetCategory();
-  }, []);
-
-  const GetCategory = async () => {
-    try {
-      setLoading(true);
-      const result = await GlobalApi.GetCategory();
-      setCategoryList(result?.data?.data);
-    } catch(error) {
-      console.log("Failed to fetch recipes : ", error);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  if(loading) {
-    return (
-      <View style={styles.loader}>
-        <ActivityIndicator size="large" color="#4CAF50"/>
-      </View>
-    );
-  }
+  const categoryList = Categories;
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.heading}>Category</Text>
+    <View>
+      <Text style={styles.heading}>Categories</Text>
       <FlatList
         data={categoryList}
         numColumns={4}
         renderItem={({ item }: any) => (
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={() => router.push({
-                pathname: '/recipe-by-category',
-                params: {
-                 categoryName: item?.name
-                }
+              pathname: '/recipe-by-category',
+              params: {
+                categoryName: item?.name
+              }
             })}
             style={styles.categoryContainer}>
-            <Image source={{ uri: item?.image?.url }} style={{ width: 40, height: 40, borderRadius: 50 }} />
+            <Image
+              source={item.imageSource}
+              style={{ width: 40, height: 40, borderRadius: 50 }}
+            />
             <Text style={styles.categoryName}>{item?.name}</Text>
           </TouchableOpacity>
         )}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(item) => item.name}
         scrollEnabled={false}
       />
     </View>
@@ -61,9 +56,6 @@ export default function CategoryList() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    // marginTop: 15
-  },
   heading: {
     margin: 10,
     fontSize: 23,
@@ -81,7 +73,4 @@ const styles = StyleSheet.create({
   categoryName: {
     marginTop: 3
   },
-  loader: {
-    padding: 50
-  }
 });

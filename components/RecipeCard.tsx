@@ -16,8 +16,7 @@ export default function RecipeCard({ recipe }: any) {
           }
         });
       }}
-      style={styles.container}
-    >
+      style={styles.container}>
       <Image
         source={{ uri: recipe.recipeImage }}
         style={{
