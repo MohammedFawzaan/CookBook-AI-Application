@@ -1,59 +1,42 @@
-import { Stack } from "expo-router";
-import { ClerkProvider, useAuth } from '@clerk/clerk-expo';
-import { tokenCache } from '@clerk/clerk-expo/token-cache';
-import { View, ActivityIndicator } from 'react-native';
+import { Stack, useRouter } from "expo-router";
+import { ClerkProvider, useAuth } from "@clerk/clerk-expo";
+import { tokenCache } from "@clerk/clerk-expo/token-cache";
+import { View, ActivityIndicator } from "react-native";
+import { useEffect } from "react";
+
+const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
 
 function ProtectedStack() {
+  const router = useRouter();
   const { isLoaded, isSignedIn } = useAuth();
 
-  if (!isLoaded) {
+  useEffect(() => {
+    if (!isLoaded) return;
+    if (!isSignedIn) router.replace("/Landing");
+    else router.replace("/(tabs)/Home");
+  }, [isLoaded, isSignedIn]);
+
+  if (!isLoaded)
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" color="green" />
       </View>
     );
-  }
-
-  if (!isSignedIn) {
-    return (
-      <Stack>
-        <Stack.Screen
-          name="Landing"
-          options={{ headerShown: false }}
-        />
-      </Stack>
-    );
-  }
 
   return (
-    <Stack>
-      <Stack.Screen
-        name="Landing"
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="(tabs)"
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="recipe-by-category/index"
-        options={{ headerTitle: '' }}
-      />
-      <Stack.Screen
-        name="recipe-detail/index"
-        options={{ headerTitle: 'Recipe Details' }}
-      />
-      <Stack.Screen
-        name="RecipeDetails"
-        options={{ headerTitle: 'Recipe Details' }}
-      />
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Landing" />
+      <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="recipe-by-category/index" />
+      <Stack.Screen name="recipe-detail/index" />
+      <Stack.Screen name="RecipeDetails" />
     </Stack>
   );
 }
 
 export default function RootLayout() {
   return (
-    <ClerkProvider publishableKey="pk_test_ZGlyZWN0LWNvbHQtMTYuY2xlcmsuYWNjb3VudHMuZGV2JA" tokenCache={tokenCache}>
+    <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
       <ProtectedStack />
     </ClerkProvider>
   );

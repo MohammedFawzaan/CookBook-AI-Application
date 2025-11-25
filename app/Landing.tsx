@@ -1,8 +1,6 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity, Animated } from 'react-native'
 import React, { useRef, useEffect } from 'react'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
-import { useRouter } from 'expo-router'
-import { useAuth } from '@clerk/clerk-expo'
 import { useClerkAuth } from '@/hooks/useClerkAuth'
 
 export default function Landing() {
@@ -18,9 +16,7 @@ export default function Landing() {
         require('./../assets/images/c3.jpg'),
     ]
 
-    const router = useRouter()
-    const { isSignedIn } = useAuth()
-    const { loading, handleAuth } = useClerkAuth()
+    const { loading, handleAuth } = useClerkAuth();
 
     // Animated values for horizontal scrolling
     const scrollX1 = useRef(new Animated.Value(0)).current
@@ -50,24 +46,21 @@ export default function Landing() {
     }, [])
 
     const renderMarquee = (animatedValue: Animated.Value, reverse = false) => (
-      <Animated.View
-        style={{
-          flexDirection: 'row',
-          transform: [
-            {
-              translateX: animatedValue.interpolate({
-                inputRange: [0, totalWidth],
-                outputRange: reverse ? [ -totalWidth, 0 ] : [0, -totalWidth],
-              }),
-            },
-          ],
-        }}>
-        {imageList.concat(imageList).map((img, i) => (
-      <Image key={i} source={img} style={styles.image} />
-    ))}
-  </Animated.View>
-)
-
+        <Animated.View
+            style={{
+                flexDirection: 'row',
+                transform: [{
+                    translateX: animatedValue.interpolate({
+                        inputRange: [0, totalWidth],
+                        outputRange: reverse ? [-totalWidth, 0] : [0, -totalWidth],
+                    }),
+                }]
+            }}>
+            {imageList.concat(imageList).map((img, i) => (
+                <Image key={i} source={img} style={styles.image} />
+            ))}
+        </Animated.View>
+    )
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
@@ -87,28 +80,17 @@ export default function Landing() {
                 <Text style={styles.text1}>
                     AI CookBook | Find, Create, Make & Enjoy Delicious Food Recipe's
                 </Text>
-                {isSignedIn ? (
-                    <TouchableOpacity
-                        onPress={() => router.push('/(tabs)/Home')}
-                        style={styles.button}
-                    >
-                        <Text style={styles.buttonText}>Welcome Back</Text>
-                    </TouchableOpacity>
-                ) : (
-                    <TouchableOpacity
-                        onPress={async () => {
-                            await handleAuth('oauth_google')
-                            router.push('/(tabs)/Home')
-                        }}
-                        style={styles.button}
-                        disabled={loading}
-                    >
-                        <Text style={styles.buttonText}>
-                            {loading ? 'Signing In...' : 'Sign In'}
-                        </Text>
-                    </TouchableOpacity>
-                )}
-                <Text style={styles.text2}>Made with Mohammed Fawzaan &#x2665;.</Text>
+                <TouchableOpacity
+                    onPress={async () => {
+                        await handleAuth("oauth_google");
+                    }}
+                    style={styles.button}
+                    disabled={loading}>
+                    <Text style={styles.buttonText}>
+                        {loading ? "Signing In..." : "Sign In"}
+                    </Text>
+                </TouchableOpacity>
+                <Text style={styles.text2}>Made by Mohammed Fawzaan &#x2665;</Text>
             </View>
         </GestureHandlerRootView>
     )
@@ -157,9 +139,9 @@ const styles = StyleSheet.create({
         fontSize: 17,
         fontWeight: '600',
     },
-})
+});
 
-// Previously commented out code - dont delete.
+// Previously commented out code - don't delete.
 // import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
 // import React from 'react'
 // import { Marquee } from '@animatereactnative/marquee'

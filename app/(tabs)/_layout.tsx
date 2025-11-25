@@ -1,30 +1,7 @@
-import { Image, StyleSheet, View, ActivityIndicator } from 'react-native';
-import React, { useEffect } from 'react';
-import { Tabs, useRouter } from 'expo-router';
-import { useAuth } from '@clerk/clerk-expo';
+import { Image, StyleSheet } from 'react-native';
+import { Tabs } from 'expo-router';
 
 export default function TabLayout() {
-    const { isLoaded, isSignedIn } = useAuth();
-    const router = useRouter();
-
-    useEffect(() => {
-        if (isLoaded && !isSignedIn) {
-            router.replace('/Landing');
-        }
-    }, [isLoaded, isSignedIn]);
-
-    if (!isLoaded) {
-        return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <ActivityIndicator size="large" color="green" />
-            </View>
-        );
-    }
-
-    if (!isSignedIn) {
-        return null; // Wait for redirect
-    }
-
     return (
         <Tabs screenOptions={{ headerShown: false }}>
             <Tabs.Screen name="Home"

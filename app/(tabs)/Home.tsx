@@ -8,7 +8,7 @@ import { useUser } from "@clerk/clerk-expo";
 
 export default function Home() {
   const { user } = useUser();
-  // console.log("Clerk User Email:", user?.primaryEmailAddress?.emailAddress);
+  console.log("Clerk User Email:", user?.primaryEmailAddress?.emailAddress);
 
   return (
     <FlatList
@@ -16,11 +16,11 @@ export default function Home() {
       renderItem={() => null}
       ListHeaderComponent={
         <ScrollView style={styles.container}>
-        <Header />
-        <CreateRecipe />
-        <CategoryList />
-        <LatestRecipes />
-      </ScrollView>
+          <Header />
+          <CreateRecipe />
+          <CategoryList />
+          <LatestRecipes />
+        </ScrollView>
       }
     />
   )
