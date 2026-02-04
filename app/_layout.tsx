@@ -1,20 +1,12 @@
-import { Stack, useRouter } from "expo-router";
+import { Stack } from "expo-router";
 import { ClerkProvider, useAuth } from "@clerk/clerk-expo";
 import { tokenCache } from "@clerk/clerk-expo/token-cache";
 import { View, ActivityIndicator } from "react-native";
-import { useEffect } from "react";
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
 
 function ProtectedStack() {
-  const router = useRouter();
-  const { isLoaded, isSignedIn } = useAuth();
-
-  useEffect(() => {
-    if (!isLoaded) return;
-    if (!isSignedIn) router.replace("/Landing");
-    else router.replace("/(tabs)/Home");
-  }, [isLoaded, isSignedIn]);
+  const { isLoaded } = useAuth();
 
   if (!isLoaded)
     return (
@@ -25,6 +17,7 @@ function ProtectedStack() {
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="index" />
       <Stack.Screen name="Landing" />
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="recipe-by-category/index" options={{ headerShown: true, title: "Recipes" }} />

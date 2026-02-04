@@ -42,8 +42,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "8b296b75-0729-40a3-88f0-8f6c679ddc3b"
+        "projectId": "d9a091a1-1b42-4f69-9b21-af40ce8a5897"
       }
-    }
+    },
+    "owner": "fawzaan"
   }
 }

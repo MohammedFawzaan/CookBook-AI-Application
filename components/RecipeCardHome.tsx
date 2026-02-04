@@ -42,7 +42,11 @@ export default function RecipeCardHome({ recipe }: any) {
 
 const styles = StyleSheet.create({
     container: {
-        margin: 5
+        margin: 5,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 20,
+        overflow: 'hidden'
     },
     linearGradient: {
         position: 'absolute',

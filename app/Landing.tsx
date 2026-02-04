@@ -1,9 +1,14 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity, Animated } from 'react-native'
+import { View, Text, StyleSheet, Image, TouchableOpacity, Animated, ActivityIndicator } from 'react-native'
 import React, { useRef, useEffect } from 'react'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useClerkAuth } from '@/hooks/useClerkAuth'
+import { useAuth } from '@clerk/clerk-expo'
+import { useRouter } from 'expo-router'
 
 export default function Landing() {
+    const { isLoaded, isSignedIn } = useAuth();
+    const router = useRouter();
     const imageList = [
         require('./../assets/images/1.jpg'),
         require('./../assets/images/2.jpg'),
@@ -64,34 +69,40 @@ export default function Landing() {
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
-            <View style={styles.container}>
-                <View style={[styles.marqueeStyle, { transform: [{ rotate: '-4deg' }] }]}>
-                    {renderMarquee(scrollX1, true)}
+            <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+                <View style={styles.container}>
+                    <View style={[styles.marqueeStyle, { transform: [{ rotate: '-4deg' }] }]}>
+                        {renderMarquee(scrollX1, true)}
+                    </View>
+                    <View style={[styles.marqueeStyle, { transform: [{ rotate: '-4deg' }] }]}>
+                        {renderMarquee(scrollX2)}
+                    </View>
+                    <View style={[styles.marqueeStyle, { transform: [{ rotate: '-4deg' }] }]}>
+                        {renderMarquee(scrollX3)}
+                    </View>
                 </View>
-                <View style={[styles.marqueeStyle, { transform: [{ rotate: '-4deg' }] }]}>
-                    {renderMarquee(scrollX2)}
-                </View>
-                <View style={[styles.marqueeStyle, { transform: [{ rotate: '-4deg' }] }]}>
-                    {renderMarquee(scrollX3)}
-                </View>
-            </View>
 
-            <View style={styles.container2}>
-                <Text style={styles.text1}>
-                    AI CookBook | Find, Create, Make & Enjoy Delicious Food Recipe's
-                </Text>
-                <TouchableOpacity
-                    onPress={async () => {
-                        await handleAuth("oauth_google");
-                    }}
-                    style={styles.button}
-                    disabled={loading}>
-                    <Text style={styles.buttonText}>
-                        {loading ? "Signing In..." : "Sign In"}
+                <View style={styles.container2}>
+                    <Text style={styles.text1}>
+                        AI CookBook | Find, Create, Make & Enjoy Delicious Food Recipe's
                     </Text>
-                </TouchableOpacity>
-                <Text style={styles.text2}>Made by Mohammed Fawzaan &#x2665;</Text>
-            </View>
+                    <TouchableOpacity
+                        onPress={async () => {
+                            if (isSignedIn) {
+                                router.replace("/(tabs)/Home");
+                            } else {
+                                await handleAuth("oauth_google");
+                            }
+                        }}
+                        style={[styles.button, isSignedIn && { backgroundColor: '#2e7d32' }]}
+                        disabled={loading || !isLoaded}>
+                        <Text style={styles.buttonText}>
+                            {loading ? "Signing In..." : (isSignedIn ? "Get Started" : "Sign In with Google")}
+                        </Text>
+                    </TouchableOpacity>
+                    <Text style={styles.text2}>Made by Mohammed Fawzaan &#x2665;</Text>
+                </View>
+            </SafeAreaView>
         </GestureHandlerRootView>
     )
 }

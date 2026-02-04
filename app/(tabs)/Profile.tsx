@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useAuth, useUser } from '@clerk/clerk-expo';
 import { useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Profile() {
   const { signOut } = useAuth();
@@ -18,7 +19,7 @@ export default function Profile() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.heading}>👋 {user?.fullName || 'Guest'}</Text>
       <View style={styles.mainContainer}>
         <Image source={{ uri: user?.imageUrl }} style={{ width: 60, height: 60, borderRadius: 30 }} />
@@ -27,16 +28,15 @@ export default function Profile() {
           <Text style={styles.buttonText}>Sign Out</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    height: '100%',
-    marginVertical: 20,
-    paddingVertical: 25,
+    flex: 1,
     paddingHorizontal: 15,
+    backgroundColor: '#fff'
   },
   mainContainer: {
     display: 'flex',

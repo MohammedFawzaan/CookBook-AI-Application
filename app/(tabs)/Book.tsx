@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native'
 import React, { useEffect, useState } from 'react'
+import { SafeAreaView } from 'react-native-safe-area-context';
 import GlobalApi from '@/services/GlobalApi'
 import { useUser } from '@clerk/clerk-expo'
 import RecipeCard from '@/components/RecipeCard'
@@ -22,7 +23,7 @@ export default function Book() {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.heading} >CookBook</Text>
       {loading && recipeList.length === 0 ? (
         <ActivityIndicator size="large" color="#4CAF50" style={{ marginTop: 20 }} />
@@ -55,16 +56,15 @@ export default function Book() {
           }
         />
       )}
-    </View>
+    </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    height: '100%',
-    marginVertical: 20,
-    paddingVertical: 25,
+    flex: 1,
     paddingHorizontal: 15,
+    backgroundColor: '#fff'
   },
   heading: {
     fontSize: 25,

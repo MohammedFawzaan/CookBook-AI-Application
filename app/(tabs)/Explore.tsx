@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet, FlatList, TextInput } from 'react-native';
 import React, { useState, useEffect } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import GlobalApi from '@/services/GlobalApi';
 import RecipeCard from '@/components/RecipeCard';
 
@@ -28,12 +29,12 @@ export default function Explore() {
       setFilteredRecipes(recipeList);
       return;
     }
-    const filtered = recipeList.filter((item: any) => item?.recipeName?.includes(text) );
+    const filtered = recipeList.filter((item: any) => item?.recipeName?.includes(text));
     setFilteredRecipes(filtered);
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.heading}>Explore</Text>
       <TextInput
         placeholder="Search Recipe's"
@@ -61,16 +62,15 @@ export default function Explore() {
           ) : null
         }
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    height: '100%',
-    marginVertical: 20,
-    paddingVertical: 25,
+    flex: 1,
     paddingHorizontal: 15,
+    backgroundColor: '#fff'
   },
   heading: {
     fontSize: 25,

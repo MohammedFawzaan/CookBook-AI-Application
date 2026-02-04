@@ -30,42 +30,41 @@ export default function RecipeByCategory() {
     };
 
     return (
-      <View style={styles.container}>
-        <Text style={styles.text1}>{categoryName} Recipes</Text>  
-        {loading && recipeList.length === 0 ? (
-            <ActivityIndicator size="large" color="#4CAF50" style={{ marginTop: 20 }} />
-        ) : (
-          <FlatList
-            data={recipeList}
-            keyExtractor={(item, index) => item.id?.toString() || index.toString()}
-            numColumns={2}
-            refreshing={loading}
-            onRefresh={GetRecipeByCategory}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 50 }}
-            renderItem={({ item }) => (
-                <View style={styles.card}>
-                    <RecipeCard recipe={item} />
-                </View>
+        <View style={styles.container}>
+            <Text style={styles.text1}>{categoryName} Recipes</Text>
+            {loading && recipeList.length === 0 ? (
+                <ActivityIndicator size="large" color="#4CAF50" style={{ marginTop: 20 }} />
+            ) : (
+                <FlatList
+                    data={recipeList}
+                    keyExtractor={(item, index) => item.id?.toString() || index.toString()}
+                    numColumns={2}
+                    refreshing={loading}
+                    onRefresh={GetRecipeByCategory}
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{ paddingBottom: 50 }}
+                    renderItem={({ item }) => (
+                        <View style={styles.card}>
+                            <RecipeCard recipe={item} />
+                        </View>
+                    )}
+                    ListEmptyComponent={
+                        !loading ?
+                            (<Text style={{ textAlign: 'center', marginTop: 50, color: '#888' }}>
+                                No recipes found for "{categoryName}"
+                            </Text>
+                            ) : null
+                    }
+                />
             )}
-            ListEmptyComponent={
-                !loading ?
-                (   <Text style={{ textAlign: 'center', marginTop: 50, color: '#888' }}>
-                        No recipes found for "{categoryName}"
-                    </Text>
-                ) : null
-            }
-          />
-        )}
-      </View>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingVertical: 15,
-        paddingHorizontal: 20,
+        padding: 10,
         backgroundColor: 'white',
     },
     text1: {

@@ -21,7 +21,7 @@ export default function CreateRecipe() {
 
     const generateRecipe = async () => {
         if (!recipe) {
-            Alert.alert("Please enter a food name");
+            Alert.alert("Empty input", "Please enter a food or dish name.");
             return;
         }
         console.log("Generating recipe for:", recipe);
@@ -133,7 +133,7 @@ export default function CreateRecipe() {
                 <Text style={styles.heading}>Your AI Powered Kitchen Companion</Text>
             </View>
             <TextInput
-                placeholder="Type a dish name & Let AI craft your Recipe."
+                placeholder="Type a dish name & Let AI craft your Recipe for you."
                 multiline={true}
                 numberOfLines={2}
                 value={recipe}
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     },
     textInput: {
         backgroundColor: 'white',
-        height: 120,
+        height: 80,
         width: "100%",
         marginVertical: 10,
         padding: 15,

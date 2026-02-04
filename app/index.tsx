@@ -1,12 +1,20 @@
-import { View, StyleSheet } from "react-native";
+import { useAuth } from "@clerk/clerk-expo";
+import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { Redirect } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
-  return (
-    <View style={styles.container}>
-      <Redirect href={'/Landing'} />
-    </View>
-  );
+  const { isLoaded } = useAuth();
+
+  if (!isLoaded) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <ActivityIndicator size="large" color="green" />
+      </SafeAreaView>
+    );
+  }
+
+  return <Redirect href={'/Landing'} />;
 }
 
 const styles = StyleSheet.create({

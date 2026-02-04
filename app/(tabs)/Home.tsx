@@ -1,36 +1,42 @@
-import { ScrollView, StyleSheet, FlatList } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import React from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import CreateRecipe from "@/components/CreateRecipe";
 import Header from '@/components/Header';
 import CategoryList from '@/components/CategoryList';
 import LatestRecipes from '@/components/LatestRecipes';
-import { useUser } from "@clerk/clerk-expo";
 
 export default function Home() {
-  const { user } = useUser();
-  console.log("Clerk User Email:", user?.primaryEmailAddress?.emailAddress);
 
   return (
-    <FlatList
-      data={[]}
-      renderItem={() => null}
-      ListHeaderComponent={
-        <ScrollView style={styles.container}>
-          <Header />
+    <SafeAreaView style={styles.mainContainer}>
+      <View style={styles.headerWrapper}>
+        <Header />
+      </View>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.contentContainer}>
           <CreateRecipe />
           <CategoryList />
           <LatestRecipes />
-        </ScrollView>
-      }
-    />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    height: '100%',
-    marginVertical: 20,
-    paddingVertical: 20,
+  mainContainer: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
+  headerWrapper: {
+    paddingHorizontal: 15,
+    paddingBottom: 10,
+    backgroundColor: 'white',
+    borderBottomWidth: 0.2,
+    borderBottomColor: '#ccc',
+  },
+  contentContainer: {
     paddingHorizontal: 10,
   }
 });
