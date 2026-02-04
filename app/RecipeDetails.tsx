@@ -10,11 +10,14 @@ export default function RecipeDetail() {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>{recipe.recipeName}</Text>
       <Image
-        source={{ uri: recipe?.recipeImage.replace('ai-guru-lab-images/', 'ai-guru-lab-images%2F') }}
+        source={recipe?.recipeImage && recipe.recipeImage.includes('http')
+          ? { uri: recipe?.recipeImage.replace('ai-guru-lab-images/', 'ai-guru-lab-images%2F') }
+          : require('./../assets/images/RecipeImage.png')}
         style={{
           width: '100%',
           height: 220,
           borderRadius: 20,
+          resizeMode: 'cover'
         }}
       />
       <Text style={styles.description}>{recipe.description}</Text>
@@ -26,14 +29,14 @@ export default function RecipeDetail() {
       </View>
 
       <Text style={styles.sectionTitle}>Ingredients</Text>
-      {recipe.ingredients.map((item: any, index: any) => (
+      {recipe.ingredients?.map((item: any, index: any) => (
         <Text key={index} style={styles.ingredient}>
           {item.icon} {item.ingredient} - {item.quantity}
         </Text>
       ))}
 
       <Text style={styles.sectionTitle}>Steps</Text>
-      {recipe.steps.map((step: any, index: any) => (
+      {recipe.steps?.map((step: any, index: any) => (
         <View key={index} style={styles.stepBox}>
           <Text style={styles.stepText}>{step}</Text>
         </View>

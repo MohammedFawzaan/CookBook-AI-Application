@@ -19,11 +19,14 @@ export default function RecipeCardHome({ recipe }: any) {
             style={styles.container}
         >
             <Image
-                source={{ uri: recipe.recipeImage }}
+                source={recipe?.recipeImage && recipe.recipeImage.includes('http')
+                    ? { uri: recipe?.recipeImage.replace('ai-guru-lab-images/', 'ai-guru-lab-images%2F') }
+                    : require('./../assets/images/RecipeImage.png')}
                 style={{
                     width: 200,
                     height: 140,
-                    borderRadius: 20
+                    borderRadius: 20,
+                    resizeMode: 'cover'
                 }}
             />
             <LinearGradient

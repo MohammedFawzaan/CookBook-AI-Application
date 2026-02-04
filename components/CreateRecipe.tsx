@@ -27,8 +27,8 @@ export default function CreateRecipe() {
         console.log("Generating recipe for:", recipe);
         setLoading(true);
         try {
-            const result = await GlobalApi.AiModel(recipe + " " + Prompt.GENERATE_RECIPE_OPTION_PROMPT);
-            const content = result.choices[0].message?.content;
+            let content = await GlobalApi.AiModel(recipe + " " + Prompt.GENERATE_RECIPE_OPTION_PROMPT);
+            content = content.replace(/```json|```/g, "").trim();
 
             if (!content) {
                 Alert.alert("No recipe found");
@@ -36,24 +36,31 @@ export default function CreateRecipe() {
             }
 
             // Split into individual recipes
-            const recipeBlocks = content.split(/\d\.\s/).filter(Boolean); // split by numbered list
+            let recipes = [];
+            try {
+                // Try parsing as JSON first since the prompt asks for it
+                const parsed = JSON.parse(content.replace(/```json|```/g, "").trim());
+                recipes = Array.isArray(parsed) ? parsed : (parsed.recipes || []);
+            } catch (jsonError) {
+                // Fallback to original text-based parsing
+                const recipeBlocks = content.split(/\d\.\s/).filter(Boolean);
+                recipes = recipeBlocks.map(block => {
+                    const lines = block.trim().split("\n").filter(Boolean);
+                    const recipeNameLine = lines[0];
+                    const descriptionLine = lines.find(line => line.startsWith("Description:")) || "";
+                    const ingredientsStartIndex = lines.findIndex(line => line.trim() === "Ingredients:");
 
-            const recipes = recipeBlocks.map(block => {
-                const lines = block.trim().split("\n").filter(Boolean);
-                const recipeNameLine = lines[0];
-                const descriptionLine = lines.find(line => line.startsWith("Description:")) || "";
-                const ingredientsStartIndex = lines.findIndex(line => line.trim() === "Ingredients:");
+                    const ingredients = ingredientsStartIndex !== -1
+                        ? lines.slice(ingredientsStartIndex + 1).map(ing => ing.replace(/^-/, "").trim())
+                        : [];
 
-                const ingredients = ingredientsStartIndex !== -1
-                    ? lines.slice(ingredientsStartIndex + 1).map(ing => ing.replace(/^-/, "").trim())
-                    : [];
-
-                return {
-                    recipeName: recipeNameLine.trim(),
-                    description: descriptionLine.replace("Description:", "").trim(),
-                    ingredients,
-                };
-            });
+                    return {
+                        recipeName: recipeNameLine.trim(),
+                        description: descriptionLine.replace("Description:", "").trim(),
+                        ingredients,
+                    };
+                });
+            }
             setRecipeOptions(recipes);
         } catch (error) {
             console.error("Error:", error);
@@ -73,14 +80,21 @@ export default function CreateRecipe() {
         setOpenLoading(true);
 
         const PROMPT = "RecipeName:" + option.recipeName + "Description" + option?.description + Prompt.GENERATE_COMPLETE_RECIPE_PROMPT;
-        const result = await GlobalApi.AiModel(PROMPT);
-        const content: any = result.choices[0].message?.content;
+        let content = await GlobalApi.AiModel(PROMPT);
         if (!content) {
             Alert.alert("No recipe found");
             return;
         }
+        content = content.replace(/```json|```/g, "").trim();
         const JSONContent = JSON.parse(content);
-        const imageUrl = await generateAiImage(JSONContent?.imagePrompt);
+
+        let imageUrl = "/assets/images/RecipeImage.png";
+        try {
+            const result = await generateAiImage(JSONContent?.imagePrompt);
+            if (result) imageUrl = result;
+        } catch (e) {
+            console.log("Image Gen Error:", e);
+        }
 
         JSONContent.recipeImage = imageUrl;
 
@@ -93,15 +107,17 @@ export default function CreateRecipe() {
 
         await SaveToDb(JSONContent, imageUrl)
             .then(() => console.log("Recipe Saved to DB"))
-            .catch((error) => console.log("Error in saving : ",error));
+            .catch((error) => console.log("Error in saving : ", error));
 
         setRecipe('');
         setOpenLoading(false);
     };
 
     const SaveToDb = async (content: any, imageUrl: any) => {
+        // Strip imagePrompt to prevent Strapi 400 errors
+        const { imagePrompt, ...rest } = content;
         const data = {
-            ...content,
+            ...rest,
             recipeImage: imageUrl,
             userEmail: user?.primaryEmailAddress?.emailAddress
         }

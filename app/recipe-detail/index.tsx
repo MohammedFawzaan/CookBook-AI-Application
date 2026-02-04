@@ -3,63 +3,66 @@ import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 
 export default function RecipeDetail() {
-    const { recipeData } = useLocalSearchParams();
-    const recipe = typeof recipeData === 'string' ? JSON.parse(recipeData) : JSON.parse(recipeData[0]);
+  const { recipeData } = useLocalSearchParams();
+  const recipe = typeof recipeData === 'string' ? JSON.parse(recipeData) : JSON.parse(recipeData[0]);
 
-    return (
-        <ScrollView contentContainerStyle={styles.container}>
-            <Text style={styles.title}>{recipe.recipeName}</Text>
-            <Image
-                source={{ uri: recipe?.recipeImage.replace('ai-guru-lab-images/', 'ai-guru-lab-images%2F') }}
-                style={{
-                    width: '100%',
-                    height: 220,
-                    borderRadius: 20,
-                }}
-            />
-            <Text style={styles.description}>{recipe.description}</Text>
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>{recipe.recipeName}</Text>
+      <Image
+        source={recipe?.recipeImage && recipe.recipeImage.includes('http')
+          ? { uri: recipe?.recipeImage.replace('ai-guru-lab-images/', 'ai-guru-lab-images%2F') }
+          : require('./../../assets/images/RecipeImage.png')}
+        style={{
+          width: '100%',
+          height: 220,
+          borderRadius: 20,
+          resizeMode: 'cover'
+        }}
+      />
+      <Text style={styles.description}>{recipe.description}</Text>
 
-            <View style={styles.tags}>
-                <Text style={styles.tag}>🔥 {recipe.calories} Cal</Text>
-                <Text style={styles.tag}>⏱️ {recipe.cookTime} Min</Text>
-                <Text style={styles.tag}>👥 Serves {recipe.serveTo}</Text>
-            </View>
+      <View style={styles.tags}>
+        <Text style={styles.tag}>🔥 {recipe.calories} Cal</Text>
+        <Text style={styles.tag}>⏱️ {recipe.cookTime} Min</Text>
+        <Text style={styles.tag}>👥 Serves {recipe.serveTo}</Text>
+      </View>
 
-            <Text style={styles.sectionTitle}>Ingredients</Text>
-            {recipe.ingredients.map((item: any, index: any) => (
-                <Text key={index} style={styles.ingredient}>
-                    {item.icon} {item.ingredient} - {item.quantity}
-                </Text>
-            ))}
+      <Text style={styles.sectionTitle}>Ingredients</Text>
+      {recipe.ingredients.map((item: any, index: any) => (
+        <Text key={index} style={styles.ingredient}>
+          {item.icon} {item.ingredient} - {item.quantity}
+        </Text>
+      ))}
 
-            <Text style={styles.sectionTitle}>Steps</Text>
-            {recipe.steps.map((step: any, index: any) => (
-                <View key={index} style={styles.stepBox}>
-                    <Text style={styles.stepText}>{step}</Text>
-                </View>
-            ))}
+      <Text style={styles.sectionTitle}>Steps</Text>
+      {recipe.steps.map((step: any, index: any) => (
+        <View key={index} style={styles.stepBox}>
+          <Text style={styles.stepText}>{step}</Text>
+        </View>
+      ))}
 
-            <View
-                style={{
-                    backgroundColor: '#d4f5dd',
-                    paddingVertical: 10,
-                    paddingHorizontal: 20,
-                    borderRadius: 12,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginTop: 5
-                }}>
-                <Text
-                    style={{
-                        fontWeight: 'bold',
-                        fontSize: 16,
-                        color: '#2e7d32'
-                    }}>
-                    😊 Enjoy your Meal
-                </Text>
-            </View>
-        </ScrollView>
-    );
+      <View
+        style={{
+          backgroundColor: '#d4f5dd',
+          paddingVertical: 10,
+          paddingHorizontal: 20,
+          borderRadius: 12,
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginTop: 5
+        }}>
+        <Text
+          style={{
+            fontWeight: 'bold',
+            fontSize: 16,
+            color: '#2e7d32'
+          }}>
+          😊 Enjoy your Meal
+        </Text>
+      </View>
+    </ScrollView>
+  );
 }
 
 const styles = StyleSheet.create({

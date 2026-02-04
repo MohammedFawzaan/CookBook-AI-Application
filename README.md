@@ -34,7 +34,7 @@
   <p>Create a <code>.env</code> file in root & add:</p>
   <pre><code>
 EXPO_PUBLIC_STRAPI_API_KEY=your-strapi-api-key
-EXPO_PUBLIC_OPENROUTER_API_KEY=your-openrouter-key
+EXPO_PUBLIC_GEMINI_KEY=your-gemini-api-key
 EXPO_PUBLIC_AIGURULAB_API_KEY=your-aiguru-key
   </code></pre>
 
