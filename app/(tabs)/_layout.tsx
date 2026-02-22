@@ -1,9 +1,14 @@
 import { Image, StyleSheet } from 'react-native';
 import { Tabs } from 'expo-router';
+import { useTheme } from '@/context/ThemeContext';
 
 export default function TabLayout() {
+    const { colors } = useTheme();
     return (
-        <Tabs screenOptions={{ headerShown: false }}>
+        <Tabs screenOptions={{
+            headerShown: false,
+            tabBarStyle: { backgroundColor: colors.tabBar, borderTopColor: colors.border },
+        }}>
             <Tabs.Screen name="Home"
                 options={{
                     tabBarIcon: ({ focused }) =>

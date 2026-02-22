@@ -4,8 +4,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import GlobalApi from '@/services/GlobalApi';
 import RecipeCard from '@/components/RecipeCard';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@/context/ThemeContext';
 
 export default function Explore() {
+  const { colors } = useTheme();
   const [recipeList, setRecipeList] = useState([]);
   const [filteredRecipes, setFilteredRecipes] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -30,22 +32,24 @@ export default function Explore() {
       setFilteredRecipes(recipeList);
       return;
     }
-    const filtered = recipeList.filter((item: any) => item?.recipeName?.toLowerCase().includes(text.toLowerCase()));
+    const filtered = recipeList.filter((item: any) =>
+      item?.recipeName?.toLowerCase().includes(text.toLowerCase())
+    );
     setFilteredRecipes(filtered);
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.heading}>Explore</Text>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <Text style={[styles.heading, { color: colors.text }]}>Explore</Text>
 
-      <View style={styles.inputContainer}>
-        <Ionicons name="search" size={24} color={'gray'} style={{ marginRight: 10 }} />
+      <View style={[styles.inputContainer, { backgroundColor: colors.inputBg, borderColor: colors.border }]}>
+        <Ionicons name="search" size={22} color={colors.textMuted} style={{ marginRight: 10 }} />
         <TextInput
           placeholder="Search Recipes..."
-          placeholderTextColor={'gray'}
+          placeholderTextColor={colors.placeholder}
           value={searchQuery}
           onChangeText={handleSearch}
-          style={styles.searchInput}
+          style={[styles.searchInput, { color: colors.text }]}
         />
       </View>
 
@@ -54,8 +58,8 @@ export default function Explore() {
         numColumns={2}
         refreshing={loading}
         onRefresh={() => {
-          GetAllRecipesList()
-          setSearchQuery('')
+          GetAllRecipesList();
+          setSearchQuery('');
         }}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
@@ -66,7 +70,7 @@ export default function Explore() {
         keyExtractor={(item, index) => index.toString()}
         ListEmptyComponent={() =>
           !loading ? (
-            <Text style={styles.noResultText}>No recipes found.</Text>
+            <Text style={[styles.noResultText, { color: colors.textMuted }]}>No recipes found.</Text>
           ) : null
         }
       />
@@ -78,30 +82,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 15,
-    backgroundColor: '#fff'
   },
   heading: {
     fontSize: 28,
     fontFamily: 'outfit-bold',
     fontWeight: 'bold',
     marginVertical: 15,
-    color: '#000',
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'white',
     borderRadius: 15,
-    paddingHorizontal: 10,
-    paddingVertical: 7,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#000000ff',
   },
   searchInput: {
     flex: 1,
-    fontSize: 16,
-    color: '#000',
+    fontSize: 18,
     fontFamily: 'outfit-medium',
   },
   card: {
@@ -111,7 +110,6 @@ const styles = StyleSheet.create({
   noResultText: {
     textAlign: 'center',
     marginTop: 20,
-    color: 'gray',
     fontSize: 16,
     fontFamily: 'outfit',
   },

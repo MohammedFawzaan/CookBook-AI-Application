@@ -2,9 +2,11 @@ import React, { useState } from 'react'
 import { View, Text, Image, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native'
 import { useRouter } from 'expo-router'
 import { LinearGradient } from 'expo-linear-gradient'
+import { useTheme } from '@/context/ThemeContext';
 
 export default function RecipeCard({ recipe }: any) {
   const router = useRouter();
+  const { colors } = useTheme();
   const [imageLoading, setImageLoading] = useState(true);
 
   return (
@@ -17,7 +19,7 @@ export default function RecipeCard({ recipe }: any) {
           }
         });
       }}
-      style={styles.container}>
+      style={[styles.container, { borderColor: colors.border }]}>
       <View>
         <Image
           source={recipe?.recipeImage && (recipe.recipeImage.includes('http') || recipe.recipeImage.startsWith('data:'))
@@ -42,7 +44,7 @@ export default function RecipeCard({ recipe }: any) {
         style={styles.linearGradient}
         colors={['transparent', 'rgba(0,0,0,0.8)', 'rgba(0,0,0,0.8)', 'rgba(0,0,0,0.8)']}>
         <View>
-          <Text style={styles.text1} >{recipe?.recipeName}</Text>
+          <Text style={styles.text1}>{recipe?.recipeName}</Text>
         </View>
       </LinearGradient>
     </TouchableOpacity>
@@ -53,7 +55,6 @@ const styles = StyleSheet.create({
   container: {
     margin: 5,
     borderWidth: 1,
-    borderColor: '#ccc',
     borderRadius: 20,
     overflow: 'hidden'
   },
@@ -68,6 +69,7 @@ const styles = StyleSheet.create({
   text1: {
     color: 'white',
     fontSize: 20,
-    fontWeight: 'semibold'
+    fontWeight: 'semibold',
+    fontFamily: 'outfit-semibold',
   }
 });

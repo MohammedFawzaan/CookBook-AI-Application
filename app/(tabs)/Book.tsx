@@ -1,13 +1,14 @@
-import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import GlobalApi from '@/services/GlobalApi'
-import { useUser } from '@clerk/clerk-expo'
-import RecipeCard from '@/components/RecipeCard'
+import GlobalApi from '@/services/GlobalApi';
+import { useUser } from '@clerk/clerk-expo';
+import RecipeCard from '@/components/RecipeCard';
+import { useTheme } from '@/context/ThemeContext';
 
 export default function Book() {
   const { user } = useUser();
-
+  const { colors } = useTheme();
   const [recipeList, setRecipeList] = React.useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -20,11 +21,11 @@ export default function Book() {
     const result = await GlobalApi.GetUserCreatedRecipe(user?.primaryEmailAddress?.emailAddress || "");
     setRecipeList(result.data.data);
     setLoading(false);
-  }
+  };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.heading} >CookBook</Text>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <Text style={[styles.heading, { color: colors.text }]}>CookBook</Text>
       {loading && recipeList.length === 0 ? (
         <ActivityIndicator size="large" color="#4CAF50" style={{ marginTop: 20 }} />
       ) : (
@@ -43,12 +44,10 @@ export default function Book() {
           ListEmptyComponent={
             !loading ? (
               <View>
-                <Text style={{
-                  fontWeight: 'normal',
-                  fontSize: 16,
-                  textAlign: 'center'
-                }}>The Recipe's which you have created display's here</Text>
-                <Text style={{ textAlign: 'center', marginTop: 50, color: '#888' }}>
+                <Text style={[{ fontWeight: 'normal', fontSize: 16, textAlign: 'center', color: colors.text }]}>
+                  The Recipe's which you have created display's here
+                </Text>
+                <Text style={{ textAlign: 'center', marginTop: 50, color: colors.textMuted }}>
                   You haven't created any recipe yet!
                 </Text>
               </View>
@@ -57,21 +56,21 @@ export default function Book() {
         />
       )}
     </SafeAreaView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 15,
-    backgroundColor: '#fff'
   },
   heading: {
     fontSize: 25,
     fontWeight: 'bold',
-    margin: 10
+    margin: 10,
+    fontFamily: 'outfit-bold',
   },
   card: {
-    flex: 1
-  }
+    flex: 1,
+  },
 });

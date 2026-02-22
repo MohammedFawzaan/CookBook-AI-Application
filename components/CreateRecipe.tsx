@@ -8,6 +8,7 @@ import LoadingDialog from "./LoadingDialog";
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import CustomAlert, { AlertType } from "./CustomAlert";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function CreateRecipe() {
     const [loading, setLoading] = useState(false);
@@ -21,9 +22,13 @@ export default function CreateRecipe() {
     const [alertMessage, setAlertMessage] = useState("");
     const [alertType, setAlertType] = useState<AlertType>('info');
 
+    // Cancel flag for recipe generation
+    const cancelledRef = useRef(false);
+
     const actionSheetRef = useRef<ActionSheetRef>(null);
     const router = useRouter();
     const { user } = useUser();
+    const { colors } = useTheme();
 
     const showAlert = (title: string, message: string, type: AlertType = 'info') => {
         setAlertTitle(title);
@@ -32,15 +37,23 @@ export default function CreateRecipe() {
         setAlertVisible(true);
     };
 
+    const handleCancel = () => {
+        cancelledRef.current = true;
+        setOpenLoading(false);
+        setLoading(false);
+    };
+
     const generateRecipe = async () => {
         if (!recipe.trim()) {
             showAlert("Missing Dish Name", "Please tell us what you'd like to cook! Type in a dish name to get started.", 'warning');
             return;
         }
-        console.log("Generating recipe for:", recipe);
         setLoading(true);
+        cancelledRef.current = false;
         try {
             let content = await GlobalApi.AiModel(recipe + " " + Prompt.GENERATE_RECIPE_OPTION_PROMPT);
+
+            if (cancelledRef.current) return;
 
             if (!content) {
                 showAlert("No Ideas Found", "Hmm, we couldn't come up with recipes for that. Try a different dish name!", 'info');
@@ -51,24 +64,16 @@ export default function CreateRecipe() {
 
             let recipes = [];
             try {
-                const parsed = JSON.parse(content.replace(/```json|```/g, "").trim());
+                const parsed = JSON.parse(content);
                 recipes = Array.isArray(parsed) ? parsed : (parsed.recipes || []);
-            } catch (jsonError) {
+            } catch {
                 const recipeBlocks = content.split(/\d\.\s/).filter(Boolean);
                 recipes = recipeBlocks.map(block => {
                     const lines = block.trim().split("\n").filter(Boolean);
-                    const recipeNameLine = lines[0];
-                    const descriptionLine = lines.find(line => line.startsWith("Description:")) || "";
-                    const ingredientsStartIndex = lines.findIndex(line => line.trim() === "Ingredients:");
-
-                    const ingredients = ingredientsStartIndex !== -1
-                        ? lines.slice(ingredientsStartIndex + 1).map(ing => ing.replace(/^-/, "").trim())
-                        : [];
-
                     return {
-                        recipeName: recipeNameLine.trim(),
-                        description: descriptionLine.replace("Description:", "").trim(),
-                        ingredients,
+                        recipeName: lines[0]?.trim() || '',
+                        description: (lines.find(l => l.startsWith("Description:")) || "").replace("Description:", "").trim(),
+                        ingredients: [],
                     };
                 });
             }
@@ -81,7 +86,7 @@ export default function CreateRecipe() {
 
             setRecipeOptions(recipes);
         } catch (error: any) {
-            console.error("Recipe generation error:", error);
+            if (cancelledRef.current) return;
             if (error?.message?.toLowerCase().includes('network') || error?.code === 'ECONNABORTED') {
                 showAlert("No Internet", "Please check your Wi-Fi or mobile data connection and try again.", 'error');
             } else if (error?.response?.status === 429) {
@@ -91,7 +96,7 @@ export default function CreateRecipe() {
             }
         }
         setLoading(false);
-        if (recipeOptions.length > 0) actionSheetRef.current?.show();
+        if (!cancelledRef.current) actionSheetRef.current?.show();
     };
 
     const generateAiImage = async (imagePrompt: string) => {
@@ -101,11 +106,14 @@ export default function CreateRecipe() {
 
     const generateCompleteRecipe = async (option: any) => {
         actionSheetRef.current?.hide();
+        cancelledRef.current = false;
         setOpenLoading(true);
 
         try {
             const PROMPT = "RecipeName:" + option.recipeName + "Description" + option?.description + Prompt.GENERATE_COMPLETE_RECIPE_PROMPT;
             let content = await GlobalApi.AiModel(PROMPT);
+
+            if (cancelledRef.current) return;
 
             if (!content) {
                 setOpenLoading(false);
@@ -115,14 +123,18 @@ export default function CreateRecipe() {
             content = content.replace(/```json|```/g, "").trim();
             const JSONContent = JSON.parse(content);
 
+            if (cancelledRef.current) return;
+
             // Generate image — always has a fallback, will never crash
-            let imageUrl = require('./../assets/images/RecipeImage.png');
+            let imageUrl: any = require('./../assets/images/RecipeImage.png');
             try {
                 const result = await generateAiImage(JSONContent?.imagePrompt);
-                if (result) imageUrl = result;
+                if (result && !cancelledRef.current) imageUrl = result;
             } catch (e) {
                 console.log("Image Gen Error (non-critical, using fallback):", e);
             }
+
+            if (cancelledRef.current) return;
 
             JSONContent.recipeImage = imageUrl;
 
@@ -131,7 +143,7 @@ export default function CreateRecipe() {
                 params: { recipeData: JSON.stringify(JSONContent) }
             });
 
-            // Save to DB — non-blocking, user still sees recipe
+            // Save to DB — non-blocking
             try {
                 await SaveToDb(JSONContent, imageUrl);
                 console.log("Recipe Saved to DB");
@@ -140,7 +152,7 @@ export default function CreateRecipe() {
             }
 
         } catch (error: any) {
-            console.error("Complete recipe error:", error);
+            if (cancelledRef.current) return;
             setOpenLoading(false);
             if (error?.message?.toLowerCase().includes('network') || error?.code === 'ECONNABORTED') {
                 showAlert("No Internet", "Please check your connection and try again.", 'error');
@@ -172,46 +184,51 @@ export default function CreateRecipe() {
         <View style={styles.container}>
             <View style={styles.container1}>
                 <Image source={require('./../assets/images/pan.gif')} style={styles.image} />
-                <Text style={styles.heading}>Your AI Powered Kitchen Companion</Text>
+                <Text style={[styles.heading, { color: colors.text }]}>Your AI Powered Kitchen Companion</Text>
             </View>
 
-            {/* Improved TextInput Area */}
             <View style={styles.inputWrapper}>
                 <TextInput
                     placeholder="Type a dish name and let AI craft a recipe for you..."
-                    placeholderTextColor="#858b95ff"
+                    placeholderTextColor={colors.placeholder}
                     multiline={true}
                     numberOfLines={2}
                     value={recipe}
                     onChangeText={setRecipe}
                     selectionColor="#2e7d32"
-                    style={styles.textInput}
+                    style={[styles.textInput, {
+                        backgroundColor: colors.inputBg,
+                        color: colors.text,
+                        borderColor: colors.border,
+                    }]}
                 />
             </View>
 
             <Button label={'Generate Recipe'} onPress={generateRecipe} iconName={'sparkles'} loading={loading} />
 
-            <LoadingDialog visible={openLoading} />
+            <LoadingDialog visible={openLoading} onCancel={handleCancel} />
 
-            <ActionSheet ref={actionSheetRef} containerStyle={{ backgroundColor: 'white' }}>
+            <ActionSheet ref={actionSheetRef} containerStyle={{ backgroundColor: colors.actionSheet }}>
                 <View style={styles.actionSheetContainer}>
-                    <Text style={styles.text1}>Choose a Recipe</Text>
+                    <Text style={[styles.text1, { color: colors.text }]}>Choose a Recipe</Text>
                     <View>
                         {recipeOptions?.map((item: any, index: any) =>
                             <TouchableOpacity
                                 onPress={() => generateCompleteRecipe(item)}
                                 key={index}
-                                style={styles.recipeOptionsView}
+                                style={[styles.recipeOptionsView, {
+                                    borderColor: colors.border,
+                                    backgroundColor: colors.surface,
+                                }]}
                             >
-                                <Text style={styles.text2}>{item?.recipeName}</Text>
-                                <Text style={styles.text3}>{item?.description}</Text>
+                                <Text style={[styles.text2, { color: colors.text }]}>{item?.recipeName}</Text>
+                                <Text style={[styles.text3, { color: colors.textSecondary }]}>{item?.description}</Text>
                             </TouchableOpacity>
                         )}
                     </View>
                 </View>
             </ActionSheet>
 
-            {/* Custom Alert */}
             <CustomAlert
                 visible={alertVisible}
                 title={alertTitle}
@@ -229,7 +246,6 @@ const styles = StyleSheet.create({
         borderRadius: 50,
     },
     container1: {
-        display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: 10,
@@ -238,10 +254,9 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 20,
         fontWeight: 'bold',
-        color: '#000',
     },
     actionSheetContainer: {
-        padding: 25
+        padding: 25,
     },
     image: {
         height: 65,
@@ -252,25 +267,20 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 15,
         marginTop: 15,
-        borderColor: '#e0e0e0',
-        backgroundColor: '#fafafa',
     },
     text1: {
         fontWeight: 'bold',
         fontSize: 22,
         textAlign: 'center',
-        color: '#1a1a1a',
         marginBottom: 4,
     },
     text2: {
         fontWeight: '700',
         fontSize: 17,
-        color: '#1a1a1a',
         marginBottom: 4,
     },
     text3: {
         fontFamily: 'outfit',
-        color: '#777',
         fontSize: 14,
         lineHeight: 20,
     },
@@ -278,14 +288,12 @@ const styles = StyleSheet.create({
         marginVertical: 10,
     },
     textInput: {
-        backgroundColor: 'white',
         minHeight: 80,
         width: "100%",
         padding: 15,
         borderRadius: 15,
         textAlignVertical: 'top',
         fontSize: 15,
-        color: '#1a1a1a',
         elevation: 4,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 3 },
@@ -294,6 +302,5 @@ const styles = StyleSheet.create({
         borderLeftWidth: 4,
         borderLeftColor: '#2e7d32',
         borderWidth: 1,
-        borderColor: '#e8e8e8',
-    }
+    },
 });

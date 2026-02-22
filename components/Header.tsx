@@ -1,22 +1,29 @@
-import { View, Text, Image, StyleSheet, Switch } from 'react-native';
-import React, { useState } from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@/context/ThemeContext';
 
 export default function Header() {
-  const [isEnabled, setIsEnabled] = useState(false);
-
+  const { isDark, toggleTheme, colors } = useTheme();
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.container1}>
         <Image style={styles.image} source={require('./../assets/images/cookbooklogo.png')} />
-        <Text style={styles.text1}>CookBook AI</Text>
+        <Text style={[styles.text1, { color: colors.text }]}>CookBook AI</Text>
       </View>
       <View style={styles.container2}>
-        {/* <Text>{isEnabled? "Veg" : "Non-Veg"}</Text>
-        <Switch 
-            value={isEnabled}
-            onValueChange={() => setIsEnabled(!isEnabled)}
-        /> */}
+        <TouchableOpacity
+          onPress={toggleTheme}
+          style={[styles.themeToggle, { backgroundColor: isDark ? '#2a2a2a' : '#f0f4f0', borderColor: colors.border }]}
+          activeOpacity={0.7}
+        >
+          <Ionicons
+            name={isDark ? 'sunny' : 'moon'}
+            size={18}
+            color={isDark ? '#fbbf24' : '#4b5563'}
+          />
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -24,31 +31,36 @@ export default function Header() {
 
 const styles = StyleSheet.create({
   container: {
-    top: 0,
-    display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    marginVertical: 5,
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   container1: {
-    display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
+    gap: 8,
   },
   container2: {
-    display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 3
   },
   image: {
     height: 40,
     width: 40,
-    borderRadius: 50
+    borderRadius: 50,
   },
   text1: {
-    textAlign: 'center',
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: 'bold',
-  }
+    fontFamily: 'outfit-bold',
+  },
+  themeToggle: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+  },
 });

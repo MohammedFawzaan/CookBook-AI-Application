@@ -5,12 +5,14 @@ import CreateRecipe from "@/components/CreateRecipe";
 import Header from '@/components/Header';
 import CategoryList from '@/components/CategoryList';
 import LatestRecipes from '@/components/LatestRecipes';
+import { useTheme } from '@/context/ThemeContext';
 
 export default function Home() {
+  const { colors } = useTheme();
 
   return (
-    <SafeAreaView style={styles.mainContainer}>
-      <View style={styles.headerWrapper}>
+    <SafeAreaView style={[styles.mainContainer, { backgroundColor: colors.background }]}>
+      <View style={[styles.headerWrapper, { backgroundColor: colors.background, borderBottomColor: colors.headerBorder }]}>
         <Header />
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -21,22 +23,19 @@ export default function Home() {
         </View>
       </ScrollView>
     </SafeAreaView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: 'white',
   },
   headerWrapper: {
     paddingHorizontal: 15,
     paddingBottom: 10,
-    backgroundColor: 'white',
     borderBottomWidth: 0.2,
-    borderBottomColor: '#ccc',
   },
   contentContainer: {
     paddingHorizontal: 10,
-  }
+  },
 });

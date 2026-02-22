@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
+import { useTheme } from '@/context/ThemeContext';
 import GlobalApi from '@/services/GlobalApi';
 import RecipeCard from '@/components/RecipeCard';
 
@@ -10,6 +12,7 @@ type Recipe = {
 
 export default function RecipeByCategory() {
     const { categoryName } = useLocalSearchParams();
+    const { colors } = useTheme();
     const [recipeList, setRecipeList] = useState<Recipe[]>([]);
     const [loading, setLoading] = useState(false);
 
@@ -30,10 +33,10 @@ export default function RecipeByCategory() {
     };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.text1}>{categoryName} Recipes</Text>
+        <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+            <Text style={[styles.text1, { color: colors.text }]}>{categoryName} Recipes</Text>
             {loading && recipeList.length === 0 ? (
-                <ActivityIndicator size="large" color="#4CAF50" style={{ marginTop: 20 }} />
+                <ActivityIndicator size="large" color={colors.primary} style={{ marginTop: 20 }} />
             ) : (
                 <FlatList
                     data={recipeList}
@@ -50,14 +53,14 @@ export default function RecipeByCategory() {
                     )}
                     ListEmptyComponent={
                         !loading ?
-                            (<Text style={{ textAlign: 'center', marginTop: 50, color: '#888' }}>
+                            (<Text style={{ textAlign: 'center', marginTop: 50, color: colors.textMuted }}>
                                 No recipes found for "{categoryName}"
                             </Text>
                             ) : null
                     }
                 />
             )}
-        </View>
+        </SafeAreaView>
     );
 }
 
@@ -65,12 +68,12 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 10,
-        backgroundColor: 'white',
     },
     text1: {
-        fontWeight: 'bold',
         fontSize: 25,
-        marginBottom: 10
+        fontWeight: 'bold',
+        margin: 10,
+        fontFamily: 'outfit-bold'
     },
     card: {
         flex: 1,

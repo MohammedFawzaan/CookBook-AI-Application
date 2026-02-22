@@ -2,6 +2,7 @@ import { Stack } from "expo-router";
 import { ClerkProvider, useAuth } from "@clerk/clerk-expo";
 import { tokenCache } from "@clerk/clerk-expo/token-cache";
 import { View, ActivityIndicator } from "react-native";
+import { ThemeProvider } from "@/context/ThemeContext";
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
 
@@ -18,11 +19,10 @@ function ProtectedStack() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
-      {/* <Stack.Screen name="Landing" /> */}
       <Stack.Screen name="(tabs)" />
-      <Stack.Screen name="recipe-by-category/index" options={{ headerShown: true, title: "Recipes" }} />
-      <Stack.Screen name="recipe-detail/index" options={{ headerShown: true, title: "Details" }} />
-      <Stack.Screen name="RecipeDetails" options={{ headerShown: true, title: "Details" }} />
+      <Stack.Screen name="recipe-by-category/index" />
+      <Stack.Screen name="recipe-detail/index" />
+      <Stack.Screen name="RecipeDetails" />
     </Stack>
   );
 }
@@ -30,7 +30,9 @@ function ProtectedStack() {
 export default function RootLayout() {
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
-      <ProtectedStack />
+      <ThemeProvider>
+        <ProtectedStack />
+      </ThemeProvider>
     </ClerkProvider>
   );
 }

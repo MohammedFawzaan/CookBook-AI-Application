@@ -7,6 +7,7 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+import { useTheme } from '@/context/ThemeContext';
 
 export type AlertType = 'success' | 'error' | 'warning' | 'info';
 
@@ -16,15 +17,8 @@ interface CustomAlertProps {
     message: string;
     type?: AlertType;
     onClose: () => void;
-    autoDismiss?: boolean; // auto dismiss after 4s
+    autoDismiss?: boolean;
 }
-
-const alertConfig: Record<AlertType, { icon: string; color: string; bg: string; border: string }> = {
-    success: { icon: '✅', color: '#2e7d32', bg: '#f0f9f4', border: '#a5d6a7' },
-    error: { icon: '❌', color: '#c62828', bg: '#fff5f5', border: '#ef9a9a' },
-    warning: { icon: '⚠️', color: '#e65100', bg: '#fff8f0', border: '#ffcc80' },
-    info: { icon: 'ℹ️', color: '#1565c0', bg: '#f0f4ff', border: '#90caf9' },
-};
 
 export default function CustomAlert({
     visible,
@@ -34,9 +28,16 @@ export default function CustomAlert({
     onClose,
     autoDismiss = true,
 }: CustomAlertProps) {
+    const { colors } = useTheme();
     const scaleAnim = useRef(new Animated.Value(0.85)).current;
     const opacityAnim = useRef(new Animated.Value(0)).current;
-    const config = alertConfig[type];
+
+    const config = {
+        success: { icon: '✅', color: colors.success },
+        error: { icon: '❌', color: colors.error },
+        warning: { icon: '⚠️', color: colors.warning },
+        info: { icon: 'ℹ️', color: colors.info },
+    }[type];
 
     useEffect(() => {
         if (visible) {
@@ -87,20 +88,19 @@ export default function CustomAlert({
                     style={[
                         styles.card,
                         {
-                            backgroundColor: config.bg,
-                            borderColor: config.border,
+                            backgroundColor: colors.alertBg,
+                            borderColor: colors.border,
                             transform: [{ scale: scaleAnim }],
                             opacity: opacityAnim,
                         },
                     ]}
                 >
-                    {/* Colored top accent bar */}
                     <View style={[styles.topBar, { backgroundColor: config.color }]} />
 
                     <View style={styles.body}>
                         <Text style={styles.icon}>{config.icon}</Text>
-                        <Text style={[styles.title, { color: config.color }]}>{title}</Text>
-                        <Text style={styles.message}>{message}</Text>
+                        <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
+                        <Text style={[styles.message, { color: colors.textSecondary }]}>{message}</Text>
 
                         <TouchableOpacity
                             style={[styles.button, { backgroundColor: config.color }]}
