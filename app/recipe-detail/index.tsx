@@ -1,37 +1,31 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, Image, StyleSheet, ScrollView, Dimensions } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
+
+const { width } = Dimensions.get('window');
 
 export default function RecipeDetail() {
   const { recipeData } = useLocalSearchParams();
   const recipe = typeof recipeData === 'string' ? JSON.parse(recipeData) : JSON.parse(recipeData[0]);
-  const router = useRouter();
 
   return (
     <View style={styles.mainContainer}>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 60 }}>
+
         {/* Header Image Section */}
         <View style={styles.imageContainer}>
           <Image
-            source={recipe?.recipeImage && (recipe.recipeImage.includes('http') || recipe.recipeImage.startsWith('data:'))
+            source={recipe?.recipeImage && (recipe.recipeImage.includes('https') || recipe.recipeImage.startsWith('data:'))
               ? { uri: recipe?.recipeImage.replace('ai-guru-lab-images/', 'ai-guru-lab-images%2F') }
               : require('./../../assets/images/RecipeImage.png')}
             style={styles.image}
           />
+          {/* Bottom gradient for smooth sheet transition */}
           <LinearGradient
-            colors={['rgba(0,0,0,0.6)', 'transparent', 'rgba(0,0,0,0.2)']}
-            style={styles.gradientOverlay}
+            colors={['transparent', 'rgba(0,0,0,0.15)', 'rgba(255,255,255,1)']}
+            style={styles.bottomGradient}
           />
-          <View style={styles.headerButtons}>
-            <TouchableOpacity onPress={() => router.back()} style={styles.iconButton}>
-              <Ionicons name="arrow-back" size={24} color="white" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.iconButton}>
-              <Ionicons name="share-social-outline" size={24} color="white" />
-            </TouchableOpacity>
-          </View>
         </View>
 
         {/* Content Section */}
@@ -68,13 +62,12 @@ export default function RecipeDetail() {
 
           {/* Ingredients */}
           <View style={styles.sectionContainer}>
-            <Text style={styles.sectionTitle}>Ingredients</Text>
+            <Text style={styles.sectionTitle}>🥦 Ingredients</Text>
             <View style={styles.ingredientsList}>
-              {recipe.ingredients.map((item: any, index: any) => (
+              {recipe.ingredients?.map((item: any, index: any) => (
                 <View key={index} style={styles.ingredientItem}>
-                  <View style={styles.bulletPoint} />
                   <Text style={styles.ingredientText}>
-                    {item.ingredient} {item.quantity ? `- ${item.quantity}` : ''}
+                    {item.icon} {item.ingredient} {item.quantity ? `- ${item.quantity}` : ''}
                   </Text>
                 </View>
               ))}
@@ -83,8 +76,8 @@ export default function RecipeDetail() {
 
           {/* Steps */}
           <View style={styles.sectionContainer}>
-            <Text style={styles.sectionTitle}>Instructions</Text>
-            {recipe.steps.map((step: any, index: any) => (
+            <Text style={styles.sectionTitle}>👨‍🍳 Instructions</Text>
+            {recipe.steps?.map((step: any, index: any) => (
               <View key={index} style={styles.stepBox}>
                 <View style={styles.stepNumberContainer}>
                   <Text style={styles.stepNumber}>{index + 1}</Text>
@@ -95,9 +88,16 @@ export default function RecipeDetail() {
           </View>
 
           {/* Footer Message */}
-          <View style={styles.footerMessage}>
-            <Text style={styles.footerText}>😊 Enjoy your Meal!</Text>
-          </View>
+          <LinearGradient
+            colors={['#1b5e20', '#2e7d32', '#43a047']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.footerCard}
+          >
+            <Text style={styles.footerEmoji}>🍽️</Text>
+            <Text style={styles.footerTitle}>Enjoy your Meal!</Text>
+            <Text style={styles.footerSubtitle}>Crafted with ❤️ by CookBook AI</Text>
+          </LinearGradient>
 
         </View>
       </ScrollView>
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   imageContainer: {
-    height: 350,
+    height: 340,
     width: '100%',
     position: 'relative',
   },
@@ -120,41 +120,26 @@ const styles = StyleSheet.create({
     height: '100%',
     resizeMode: 'cover',
   },
-  gradientOverlay: {
+  bottomGradient: {
     position: 'absolute',
-    top: 0,
+    bottom: 0,
     left: 0,
     right: 0,
-    height: 120,
-  },
-  headerButtons: {
-    position: 'absolute',
-    top: 50,
-    left: 0,
-    right: 0,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-  },
-  iconButton: {
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    padding: 10,
-    borderRadius: 50,
-    backdropFilter: 'blur(10px)', // Note: backdropFilter only works on web/some versions, but rgba gives fallback tint
+    height: 100,
   },
   contentContainer: {
-    marginTop: -30,
+    marginTop: -20,
     backgroundColor: '#fff',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     paddingHorizontal: 20,
-    paddingTop: 30,
+    paddingTop: 25,
   },
   title: {
     fontSize: 28,
     fontWeight: '800',
     color: '#1a1a1a',
-    marginBottom: 10,
+    marginBottom: 8,
     fontFamily: 'outfit-bold',
     lineHeight: 34,
   },
@@ -162,18 +147,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     lineHeight: 24,
-    marginBottom: 25,
+    marginBottom: 22,
     fontFamily: 'outfit',
   },
   statsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     backgroundColor: '#f8f9fa',
-    borderRadius: 15,
-    padding: 15,
+    borderRadius: 18,
+    padding: 16,
     marginBottom: 25,
     borderWidth: 1,
     borderColor: '#eee',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    elevation: 2,
   },
   statItem: {
     alignItems: 'center',
@@ -181,29 +171,28 @@ const styles = StyleSheet.create({
   },
   statIconContainer: {
     backgroundColor: 'white',
-    padding: 8,
+    padding: 9,
     borderRadius: 50,
-    marginBottom: 5,
+    marginBottom: 6,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.06,
     shadowRadius: 3,
     elevation: 2,
   },
-  statIcon: {
-    fontSize: 20,
-  },
+  statIcon: { fontSize: 20 },
   statLabel: {
     fontSize: 12,
     color: '#888',
-    marginBottom: 2,
+    marginBottom: 3,
     fontFamily: 'outfit',
   },
   statValue: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '700',
-    color: '#333',
+    color: '#222',
     fontFamily: 'outfit-medium',
+    textAlign: 'center',
   },
   divider: {
     width: 1,
@@ -211,20 +200,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#ddd',
     alignSelf: 'center',
   },
-  sectionContainer: {
-    marginBottom: 25,
-  },
+  sectionContainer: { marginBottom: 26 },
   sectionTitle: {
     fontSize: 20,
     fontWeight: '700',
     color: '#1a1a1a',
-    marginBottom: 15,
+    marginBottom: 14,
     fontFamily: 'outfit-bold',
   },
   ingredientsList: {
     backgroundColor: '#f8f9fa',
     borderRadius: 15,
     padding: 15,
+    borderWidth: 1,
+    borderColor: '#eee',
   },
   ingredientItem: {
     flexDirection: 'row',
@@ -232,9 +221,9 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   bulletPoint: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+    width: 7,
+    height: 7,
+    borderRadius: 4,
     backgroundColor: '#2e7d32',
     marginTop: 8,
     marginRight: 10,
@@ -248,17 +237,22 @@ const styles = StyleSheet.create({
   },
   stepBox: {
     flexDirection: 'row',
-    marginBottom: 20,
+    marginBottom: 18,
+    backgroundColor: '#f8f9fa',
+    borderRadius: 14,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: '#eee',
   },
   stepNumberContainer: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     backgroundColor: '#2e7d32',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 15,
-    marginTop: 0,
+    marginRight: 14,
+    flexShrink: 0,
   },
   stepNumber: {
     color: 'white',
@@ -266,24 +260,38 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   stepText: {
-    fontSize: 16,
+    fontSize: 15,
     color: '#444',
-    lineHeight: 24,
+    lineHeight: 23,
     flex: 1,
     fontFamily: 'outfit',
   },
-  footerMessage: {
-    backgroundColor: '#f0f9f4',
-    padding: 15,
-    borderRadius: 12,
+  footerCard: {
+    borderRadius: 20,
+    paddingVertical: 28,
+    paddingHorizontal: 20,
     alignItems: 'center',
     marginTop: 10,
-    borderWidth: 1,
-    borderColor: '#d4f5dd',
+    shadowColor: '#2e7d32',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
   },
-  footerText: {
-    color: '#2e7d32',
-    fontWeight: '600',
-    fontSize: 16,
-  }
+  footerEmoji: {
+    fontSize: 38,
+    marginBottom: 8,
+  },
+  footerTitle: {
+    color: 'white',
+    fontWeight: '800',
+    fontSize: 22,
+    fontFamily: 'outfit-bold',
+    marginBottom: 4,
+  },
+  footerSubtitle: {
+    color: 'rgba(255,255,255,0.8)',
+    fontSize: 13,
+    fontFamily: 'outfit',
+  },
 });

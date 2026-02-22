@@ -50,18 +50,31 @@ const GenerateAiImage = async (input: string) => {
     if (response.data && response.data.predictions && response.data.predictions.length > 0) {
       const base64Image = `data:image/jpeg;base64,${response.data.predictions[0].bytesBase64Encoded}`;
 
-      // Upload to Cloudinary immediately
+      // Upload to Cloudinary — fallback to Pollinations if Cloudinary fails
       const cloudinaryUrl = await uploadToCloudinary(base64Image);
-
       if (cloudinaryUrl) {
         return { data: { image: cloudinaryUrl } };
       }
+      // Cloudinary failed — fall through to Pollinations fallback below
+      console.warn("Cloudinary failed, using Pollinations fallback.");
     }
 
-    throw new Error("Generation failed");
-  } catch (error) {
-    console.error("Error generating/uploading image:", error);
-    // Fallback to Pollinations AI
+    throw new Error("no_prediction");
+
+  } catch (error: any) {
+    const status = error?.response?.status;
+
+    if (status === 429) {
+      // Credits exhausted — still fallback gracefully but log it
+      console.warn("Imagen 429: API credits exhausted. Using Pollinations fallback.");
+    } else if (!status && error?.message !== 'no_prediction') {
+      // Likely a network error
+      console.warn("Imagen network error. Using Pollinations fallback.");
+    } else {
+      console.error("Image generation error:", error?.response?.data || error?.message);
+    }
+
+    // Pollinations fallback — always provides an image
     const encodedPrompt = encodeURIComponent(input);
     const seed = Math.floor(Math.random() * 1000000);
     return { data: { image: `https://pollinations.ai/p/${encodedPrompt}?width=1024&height=1024&seed=${seed}&model=flux` } };

@@ -1,12 +1,13 @@
 import GlobalApi from "@/services/GlobalApi";
 import { useRef, useState } from "react";
-import { Text, View, TextInput, Alert, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { Text, View, TextInput, StyleSheet, TouchableOpacity, Image } from "react-native";
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import Button from "./Button";
 import Prompt from "./../services/Prompt";
 import LoadingDialog from "./LoadingDialog";
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
+import CustomAlert, { AlertType } from "./CustomAlert";
 
 export default function CreateRecipe() {
     const [loading, setLoading] = useState(false);
@@ -14,35 +15,45 @@ export default function CreateRecipe() {
     const [recipe, setRecipe] = useState<string>("");
     const [openLoading, setOpenLoading] = useState(false);
 
-    const actionSheetRef = useRef<ActionSheetRef>(null);
+    // Custom alert state
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertTitle, setAlertTitle] = useState("");
+    const [alertMessage, setAlertMessage] = useState("");
+    const [alertType, setAlertType] = useState<AlertType>('info');
 
+    const actionSheetRef = useRef<ActionSheetRef>(null);
     const router = useRouter();
     const { user } = useUser();
 
+    const showAlert = (title: string, message: string, type: AlertType = 'info') => {
+        setAlertTitle(title);
+        setAlertMessage(message);
+        setAlertType(type);
+        setAlertVisible(true);
+    };
+
     const generateRecipe = async () => {
-        if (!recipe) {
-            Alert.alert("Empty input", "Please enter a food or dish name.");
+        if (!recipe.trim()) {
+            showAlert("Missing Dish Name", "Please tell us what you'd like to cook! Type in a dish name to get started.", 'warning');
             return;
         }
         console.log("Generating recipe for:", recipe);
         setLoading(true);
         try {
             let content = await GlobalApi.AiModel(recipe + " " + Prompt.GENERATE_RECIPE_OPTION_PROMPT);
-            content = content.replace(/```json|```/g, "").trim();
 
             if (!content) {
-                Alert.alert("No recipe found");
+                showAlert("No Ideas Found", "Hmm, we couldn't come up with recipes for that. Try a different dish name!", 'info');
+                setLoading(false);
                 return;
             }
+            content = content.replace(/```json|```/g, "").trim();
 
-            // Split into individual recipes
             let recipes = [];
             try {
-                // Try parsing as JSON first since the prompt asks for it
                 const parsed = JSON.parse(content.replace(/```json|```/g, "").trim());
                 recipes = Array.isArray(parsed) ? parsed : (parsed.recipes || []);
             } catch (jsonError) {
-                // Fallback to original text-based parsing
                 const recipeBlocks = content.split(/\d\.\s/).filter(Boolean);
                 recipes = recipeBlocks.map(block => {
                     const lines = block.trim().split("\n").filter(Boolean);
@@ -61,13 +72,26 @@ export default function CreateRecipe() {
                     };
                 });
             }
+
+            if (!recipes.length) {
+                showAlert("No Recipes Found", "We couldn't find any recipes for that dish. Try something else!", 'info');
+                setLoading(false);
+                return;
+            }
+
             setRecipeOptions(recipes);
-        } catch (error) {
-            console.error("Error:", error);
-            Alert.alert("Failed to generate recipe");
+        } catch (error: any) {
+            console.error("Recipe generation error:", error);
+            if (error?.message?.toLowerCase().includes('network') || error?.code === 'ECONNABORTED') {
+                showAlert("No Internet", "Please check your Wi-Fi or mobile data connection and try again.", 'error');
+            } else if (error?.response?.status === 429) {
+                showAlert("AI is Busy", "Our AI is handling lots of requests right now. Please wait a moment and try again.", 'warning');
+            } else {
+                showAlert("Something Went Wrong", "We couldn't generate your recipe right now. Please try again in a moment.", 'error');
+            }
         }
         setLoading(false);
-        actionSheetRef.current?.show();
+        if (recipeOptions.length > 0) actionSheetRef.current?.show();
     };
 
     const generateAiImage = async (imagePrompt: string) => {
@@ -79,41 +103,53 @@ export default function CreateRecipe() {
         actionSheetRef.current?.hide();
         setOpenLoading(true);
 
-        const PROMPT = "RecipeName:" + option.recipeName + "Description" + option?.description + Prompt.GENERATE_COMPLETE_RECIPE_PROMPT;
-        let content = await GlobalApi.AiModel(PROMPT);
-        if (!content) {
-            Alert.alert("No recipe found");
-            return;
-        }
-        content = content.replace(/```json|```/g, "").trim();
-        const JSONContent = JSON.parse(content);
-
-        let imageUrl = "/assets/images/RecipeImage.png";
         try {
-            const result = await generateAiImage(JSONContent?.imagePrompt);
-            if (result) imageUrl = result;
-        } catch (e) {
-            console.log("Image Gen Error:", e);
-        }
+            const PROMPT = "RecipeName:" + option.recipeName + "Description" + option?.description + Prompt.GENERATE_COMPLETE_RECIPE_PROMPT;
+            let content = await GlobalApi.AiModel(PROMPT);
 
-        JSONContent.recipeImage = imageUrl;
-
-        router.push({
-            pathname: '/RecipeDetails',
-            params: {
-                recipeData: JSON.stringify(JSONContent)
+            if (!content) {
+                setOpenLoading(false);
+                showAlert("Recipe Unavailable", "We couldn't build this recipe right now. Please try again.", 'error');
+                return;
             }
-        });
+            content = content.replace(/```json|```/g, "").trim();
+            const JSONContent = JSON.parse(content);
 
-        try {
-            await SaveToDb(JSONContent, imageUrl);
-            console.log("Recipe Saved to DB");
+            // Generate image — always has a fallback, will never crash
+            let imageUrl = require('./../assets/images/RecipeImage.png');
+            try {
+                const result = await generateAiImage(JSONContent?.imagePrompt);
+                if (result) imageUrl = result;
+            } catch (e) {
+                console.log("Image Gen Error (non-critical, using fallback):", e);
+            }
+
+            JSONContent.recipeImage = imageUrl;
+
+            router.push({
+                pathname: '/RecipeDetails',
+                params: { recipeData: JSON.stringify(JSONContent) }
+            });
+
+            // Save to DB — non-blocking, user still sees recipe
+            try {
+                await SaveToDb(JSONContent, imageUrl);
+                console.log("Recipe Saved to DB");
+            } catch (error: any) {
+                console.log("Save Error (non-critical):", error);
+            }
+
         } catch (error: any) {
-            console.log("Save Error:", error);
-            Alert.alert(
-                "Recipe Created",
-                "Your recipe is ready! However, we couldn't save it to your history right now. You can still view it below."
-            );
+            console.error("Complete recipe error:", error);
+            setOpenLoading(false);
+            if (error?.message?.toLowerCase().includes('network') || error?.code === 'ECONNABORTED') {
+                showAlert("No Internet", "Please check your connection and try again.", 'error');
+            } else if (error?.response?.status === 429) {
+                showAlert("AI is Busy", "Our AI is handling lots of requests right now. Please wait a moment and try again.", 'warning');
+            } else {
+                showAlert("Recipe Failed", "Something went wrong while building your recipe. Please try again.", 'error');
+            }
+            return;
         }
 
         setRecipe('');
@@ -121,13 +157,12 @@ export default function CreateRecipe() {
     };
 
     const SaveToDb = async (content: any, imageUrl: any) => {
-        // Strip imagePrompt to prevent Strapi 400 errors
         const { imagePrompt, ...rest } = content;
         const data = {
             ...rest,
-            recipeImage: imageUrl,
+            recipeImage: typeof imageUrl === 'string' ? imageUrl : '',
             userEmail: user?.primaryEmailAddress?.emailAddress
-        }
+        };
         setOpenLoading(false);
         const result = await GlobalApi.CreateNewRecipe(data);
         return result.data.data;
@@ -139,22 +174,28 @@ export default function CreateRecipe() {
                 <Image source={require('./../assets/images/pan.gif')} style={styles.image} />
                 <Text style={styles.heading}>Your AI Powered Kitchen Companion</Text>
             </View>
-            <TextInput
-                placeholder="Type a dish name & Let AI craft your Recipe for you."
-                placeholderTextColor="gray"
-                multiline={true}
-                numberOfLines={2}
-                value={recipe}
-                onChangeText={setRecipe}
-                style={styles.textInput}
-            />
+
+            {/* Improved TextInput Area */}
+            <View style={styles.inputWrapper}>
+                <TextInput
+                    placeholder="Type a dish name and let AI craft a recipe for you..."
+                    placeholderTextColor="#858b95ff"
+                    multiline={true}
+                    numberOfLines={2}
+                    value={recipe}
+                    onChangeText={setRecipe}
+                    selectionColor="#2e7d32"
+                    style={styles.textInput}
+                />
+            </View>
+
             <Button label={'Generate Recipe'} onPress={generateRecipe} iconName={'sparkles'} loading={loading} />
 
             <LoadingDialog visible={openLoading} />
 
             <ActionSheet ref={actionSheetRef} containerStyle={{ backgroundColor: 'white' }}>
                 <View style={styles.actionSheetContainer}>
-                    <Text style={styles.text1}>Select Recipe</Text>
+                    <Text style={styles.text1}>Choose a Recipe</Text>
                     <View>
                         {recipeOptions?.map((item: any, index: any) =>
                             <TouchableOpacity
@@ -169,13 +210,21 @@ export default function CreateRecipe() {
                     </View>
                 </View>
             </ActionSheet>
+
+            {/* Custom Alert */}
+            <CustomAlert
+                visible={alertVisible}
+                title={alertTitle}
+                message={alertMessage}
+                type={alertType}
+                onClose={() => setAlertVisible(false)}
+            />
         </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        // backgroundColor: "#9df3a1ff",
         paddingHorizontal: 7,
         borderRadius: 50,
     },
@@ -200,41 +249,51 @@ const styles = StyleSheet.create({
     },
     recipeOptionsView: {
         padding: 15,
-        borderWidth: 0.2,
+        borderWidth: 1,
         borderRadius: 15,
         marginTop: 15,
-        borderColor: '#ccc',
+        borderColor: '#e0e0e0',
+        backgroundColor: '#fafafa',
     },
     text1: {
         fontWeight: 'bold',
-        fontSize: 24,
+        fontSize: 22,
         textAlign: 'center',
-        color: '#000',
+        color: '#1a1a1a',
+        marginBottom: 4,
     },
     text2: {
-        fontWeight: 'bold',
-        fontSize: 18,
-        color: '#000',
+        fontWeight: '700',
+        fontSize: 17,
+        color: '#1a1a1a',
+        marginBottom: 4,
     },
     text3: {
         fontFamily: 'outfit',
-        color: 'gray'
+        color: '#777',
+        fontSize: 14,
+        lineHeight: 20,
+    },
+    inputWrapper: {
+        marginVertical: 10,
     },
     textInput: {
         backgroundColor: 'white',
-        height: 80,
+        minHeight: 80,
         width: "100%",
-        marginVertical: 10,
         padding: 15,
         borderRadius: 15,
         textAlignVertical: 'top',
-        fontWeight: 'semibold',
         fontSize: 15,
-        color: '#000',
-        elevation: 6,
+        color: '#1a1a1a',
+        elevation: 4,
         shadowColor: '#000',
-        shadowOffset: { width: 2, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.08,
+        shadowRadius: 6,
+        borderLeftWidth: 4,
+        borderLeftColor: '#2e7d32',
+        borderWidth: 1,
+        borderColor: '#e8e8e8',
     }
 });
