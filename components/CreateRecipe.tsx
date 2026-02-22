@@ -41,6 +41,7 @@ export default function CreateRecipe() {
         cancelledRef.current = true;
         setOpenLoading(false);
         setLoading(false);
+        setRecipe("");
     };
 
     const generateRecipe = async () => {
@@ -138,12 +139,15 @@ export default function CreateRecipe() {
 
             JSONContent.recipeImage = imageUrl;
 
+            // Final check before navigating and saving
+            if (cancelledRef.current) return;
+
             router.push({
                 pathname: '/RecipeDetails',
                 params: { recipeData: JSON.stringify(JSONContent) }
             });
 
-            // Save to DB — non-blocking
+            // Save to DB — only if not cancelled
             try {
                 await SaveToDb(JSONContent, imageUrl);
                 console.log("Recipe Saved to DB");
@@ -169,6 +173,7 @@ export default function CreateRecipe() {
     };
 
     const SaveToDb = async (content: any, imageUrl: any) => {
+        if (cancelledRef.current) return;
         const { imagePrompt, ...rest } = content;
         const data = {
             ...rest,

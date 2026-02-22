@@ -12,9 +12,9 @@ export const lightColors = {
     background: '#ffffff',
     surface: '#f8f9fa',
     card: '#ffffff',
-    text: '#1a1a1a',
+    text: '#060606ff',
     textSecondary: '#666666',
-    textMuted: '#888888',
+    textMuted: '#7c7474ff',
     border: '#eeeeee',
     inputBg: '#ffffff',
     tabBar: '#ffffff',
@@ -60,15 +60,15 @@ export const darkColors = {
 };
 
 const ThemeContext = createContext<ThemeContextType>({
-    isDark: false,
+    isDark: true,
     toggleTheme: () => { },
-    colors: lightColors,
+    colors: darkColors,
 });
 
 const THEME_KEY = '@cookbook_theme';
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-    const [isDark, setIsDark] = useState(false);
+    const [isDark, setIsDark] = useState(true);
 
     useEffect(() => {
         AsyncStorage.getItem(THEME_KEY).then(value => {

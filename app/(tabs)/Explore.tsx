@@ -84,10 +84,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   heading: {
-    fontSize: 28,
+    fontSize: 25,
     fontFamily: 'outfit-bold',
     fontWeight: 'bold',
-    marginVertical: 15,
+    margin: 10,
   },
   inputContainer: {
     flexDirection: 'row',
