@@ -2,7 +2,9 @@ import { View, Text, Image, StyleSheet, Switch } from 'react-native';
 import React, { useState } from 'react';
 
 export default function Header() {
-  const [ isEnabled, setIsEnabled ] = useState(false);
+  const [isEnabled, setIsEnabled] = useState(false);
+
+
   return (
     <View style={styles.container}>
       <View style={styles.container1}>

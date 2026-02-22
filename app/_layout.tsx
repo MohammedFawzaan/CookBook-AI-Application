@@ -18,7 +18,7 @@ function ProtectedStack() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
-      <Stack.Screen name="Landing" />
+      {/* <Stack.Screen name="Landing" /> */}
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="recipe-by-category/index" options={{ headerShown: true, title: "Recipes" }} />
       <Stack.Screen name="recipe-detail/index" options={{ headerShown: true, title: "Details" }} />

@@ -105,9 +105,16 @@ export default function CreateRecipe() {
             }
         });
 
-        await SaveToDb(JSONContent, imageUrl)
-            .then(() => console.log("Recipe Saved to DB"))
-            .catch((error) => console.log("Error in saving : ", error));
+        try {
+            await SaveToDb(JSONContent, imageUrl);
+            console.log("Recipe Saved to DB");
+        } catch (error: any) {
+            console.log("Save Error:", error);
+            Alert.alert(
+                "Recipe Created",
+                "Your recipe is ready! However, we couldn't save it to your history right now. You can still view it below."
+            );
+        }
 
         setRecipe('');
         setOpenLoading(false);
@@ -134,6 +141,7 @@ export default function CreateRecipe() {
             </View>
             <TextInput
                 placeholder="Type a dish name & Let AI craft your Recipe for you."
+                placeholderTextColor="gray"
                 multiline={true}
                 numberOfLines={2}
                 value={recipe}
@@ -144,12 +152,16 @@ export default function CreateRecipe() {
 
             <LoadingDialog visible={openLoading} />
 
-            <ActionSheet ref={actionSheetRef}>
+            <ActionSheet ref={actionSheetRef} containerStyle={{ backgroundColor: 'white' }}>
                 <View style={styles.actionSheetContainer}>
                     <Text style={styles.text1}>Select Recipe</Text>
                     <View>
                         {recipeOptions?.map((item: any, index: any) =>
-                            <TouchableOpacity onPress={() => generateCompleteRecipe(item)} key={index} style={styles.recipeOptionsView}>
+                            <TouchableOpacity
+                                onPress={() => generateCompleteRecipe(item)}
+                                key={index}
+                                style={styles.recipeOptionsView}
+                            >
                                 <Text style={styles.text2}>{item?.recipeName}</Text>
                                 <Text style={styles.text3}>{item?.description}</Text>
                             </TouchableOpacity>
@@ -171,11 +183,13 @@ const styles = StyleSheet.create({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        marginBottom: 10,
     },
     heading: {
         textAlign: 'center',
         fontSize: 20,
         fontWeight: 'bold',
+        color: '#000',
     },
     actionSheetContainer: {
         padding: 25
@@ -188,16 +202,19 @@ const styles = StyleSheet.create({
         padding: 15,
         borderWidth: 0.2,
         borderRadius: 15,
-        marginTop: 15
+        marginTop: 15,
+        borderColor: '#ccc',
     },
     text1: {
         fontWeight: 'bold',
         fontSize: 24,
-        textAlign: 'center'
+        textAlign: 'center',
+        color: '#000',
     },
     text2: {
         fontWeight: 'bold',
-        fontSize: 18
+        fontSize: 18,
+        color: '#000',
     },
     text3: {
         fontFamily: 'outfit',
@@ -213,5 +230,11 @@ const styles = StyleSheet.create({
         textAlignVertical: 'top',
         fontWeight: 'semibold',
         fontSize: 15,
+        color: '#000',
+        elevation: 6,
+        shadowColor: '#000',
+        shadowOffset: { width: 2, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
     }
 });

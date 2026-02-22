@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google AI Studio Imagen Tester</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .card {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background: #4285f4;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:disabled {
+            background: #ccc;
+        }
+
+        #result {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        img {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .error {
+            color: red;
+            background: #fff0f0;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        .log {
+            font-family: monospace;
+            background: #333;
+            color: #0f0;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Imagen API Tester</h1>
+    <p>Use this to test if your Gemini API key has access to the Imagen models.</p>
+
+    <div class="card">
+        <label>Gemini API Key:</label>
+        <input type="text" id="apiKey" placeholder="Enter your EXPO_PUBLIC_GEMINI_KEY from .env" />
+
+        <label>Model ID:</label>
+        <select id="modelId">
+            <option value="imagen-4.0-fast-generate-001">imagen-4.0-fast-generate-001 (Recommended Fast)</option>
+            <option value="imagen-4.0-generate-001">imagen-4.0-generate-001 (Standard)</option>
+            <option value="imagen-4.0-ultra-generate-001">imagen-4.0-ultra-generate-001 (High Credits)</option>
+        </select>
+
+        <label>Prompt:</label>
+        <input type="text" id="prompt" value="A delicious plate of pasta with tomato sauce and fresh basil" />
+
+        <button id="btn">Generate Image</button>
+        <button id="listBtn" style="background: #34a853; margin-left: 10px;">List My Models</button>
+    </div>
+
+    <div id="status"></div>
+    <div id="result"></div>
+    <div id="debug"></div>
+
+    <script>
+        const btn = document.getElementById('btn');
+        const listBtn = document.getElementById('listBtn');
+        const status = document.getElementById('status');
+        const result = document.getElementById('result');
+        const debug = document.getElementById('debug');
+
+        listBtn.onclick = async () => {
+            const key = document.getElementById('apiKey').value;
+            if (!key) { alert('Please enter an API key'); return; }
+            status.innerHTML = "Fetching models...";
+            try {
+                const response = await axios.get(`https://generativelanguage.googleapis.com/v1beta/models?key=${key}`);
+                debug.innerHTML = `<h3>Your Available Models:</h3><div class='log'>${JSON.stringify(response.data, null, 2)}</div>`;
+                status.innerHTML = "Check the list below for any 'imagen' models.";
+            } catch (err) {
+                status.innerHTML = `<div class='error'>Failed to list models: ${err.message}</div>`;
+            }
+        }
+
+        btn.onclick = async () => {
+            const key = document.getElementById('apiKey').value;
+            const prompt = document.getElementById('prompt').value;
+            const model = document.getElementById('modelId').value;
+
+            if (!key) { alert('Please enter an API key'); return; }
+
+            btn.disabled = true;
+            status.innerHTML = "Generating... Please wait.";
+            result.innerHTML = "";
+            debug.innerHTML = "";
+
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:predict?key=${key}`;
+
+            try {
+                const response = await axios.post(url, {
+                    instances: [{ prompt: prompt }],
+                    parameters: {
+                        sampleCount: 1,
+                        aspectRatio: "1:1",
+                        outputMimeType: "image/jpeg"
+                    }
+                });
+
+                console.log("Response:", response.data);
+
+                if (response.data.predictions && response.data.predictions.length > 0) {
+                    const base64 = response.data.predictions[0].bytesBase64Encoded;
+                    result.innerHTML = `<h3>Success!</h3><img src="data:image/jpeg;base64,${base64}" />`;
+                    status.innerHTML = "";
+                } else {
+                    status.innerHTML = "<div class='error'>Success call but no predictions found. Check console.</div>";
+                    debug.innerHTML = `<div class='log'>${JSON.stringify(response.data, null, 2)}</div>`;
+                }
+            } catch (err) {
+                console.error("Full Error:", err);
+                const msg = err.response ? `Error ${err.response.status}: ${JSON.stringify(err.response.data)}` : err.message;
+                status.innerHTML = `<div class='error'>${msg}</div>`;
+
+                if (err.response && err.response.status === 404) {
+                    status.innerHTML += `<p><b>Note:</b> A 404 usually means the model ID <u>${model}</u> isn't available for your key or region yet.</p>`;
+                }
+            } finally {
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+
+</html>

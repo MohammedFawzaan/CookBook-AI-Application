@@ -1,10 +1,11 @@
-import React from 'react'
-import { View, Image, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import React, { useState } from 'react'
+import { View, Image, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useRouter } from 'expo-router'
 
 export default function RecipeCardHome({ recipe }: any) {
     const router = useRouter();
+    const [imageLoading, setImageLoading] = useState(true);
 
     return (
         <TouchableOpacity
@@ -18,17 +19,26 @@ export default function RecipeCardHome({ recipe }: any) {
             }}
             style={styles.container}
         >
-            <Image
-                source={recipe?.recipeImage && recipe.recipeImage.includes('http')
-                    ? { uri: recipe?.recipeImage.replace('ai-guru-lab-images/', 'ai-guru-lab-images%2F') }
-                    : require('./../assets/images/RecipeImage.png')}
-                style={{
-                    width: 200,
-                    height: 140,
-                    borderRadius: 20,
-                    resizeMode: 'cover'
-                }}
-            />
+            <View>
+                <Image
+                    source={recipe?.recipeImage && (recipe.recipeImage.includes('http') || recipe.recipeImage.startsWith('data:'))
+                        ? { uri: recipe?.recipeImage.replace('ai-guru-lab-images/', 'ai-guru-lab-images%2F') }
+                        : require('./../assets/images/RecipeImage.png')}
+                    style={{
+                        width: 200,
+                        height: 140,
+                        borderRadius: 20,
+                        resizeMode: 'cover'
+                    }}
+                    onLoadStart={() => setImageLoading(true)}
+                    onLoadEnd={() => setImageLoading(false)}
+                />
+                {imageLoading && (
+                    <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
+                        <ActivityIndicator size="small" color="#2e7d32" />
+                    </View>
+                )}
+            </View>
             <LinearGradient
                 style={styles.linearGradient}
                 colors={['transparent', 'rgba(0,0,0,0.8)', 'rgba(0,0,0,0.8)', 'rgba(0,0,0,0.8)']}>

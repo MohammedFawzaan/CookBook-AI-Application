@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import GlobalApi from '@/services/GlobalApi';
 import RecipeCard from '@/components/RecipeCard';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function Explore() {
   const [recipeList, setRecipeList] = useState([]);
@@ -29,19 +30,25 @@ export default function Explore() {
       setFilteredRecipes(recipeList);
       return;
     }
-    const filtered = recipeList.filter((item: any) => item?.recipeName?.includes(text));
+    const filtered = recipeList.filter((item: any) => item?.recipeName?.toLowerCase().includes(text.toLowerCase()));
     setFilteredRecipes(filtered);
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.heading}>Explore</Text>
-      <TextInput
-        placeholder="Search Recipe's"
-        value={searchQuery}
-        onChangeText={handleSearch}
-        style={styles.searchInput}
-      />
+
+      <View style={styles.inputContainer}>
+        <Ionicons name="search" size={24} color={'gray'} style={{ marginRight: 10 }} />
+        <TextInput
+          placeholder="Search Recipes..."
+          placeholderTextColor={'gray'}
+          value={searchQuery}
+          onChangeText={handleSearch}
+          style={styles.searchInput}
+        />
+      </View>
+
       <FlatList
         data={filteredRecipes}
         numColumns={2}
@@ -56,6 +63,7 @@ export default function Explore() {
             <RecipeCard recipe={item} />
           </View>
         )}
+        keyExtractor={(item, index) => index.toString()}
         ListEmptyComponent={() =>
           !loading ? (
             <Text style={styles.noResultText}>No recipes found.</Text>
@@ -73,24 +81,38 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff'
   },
   heading: {
-    fontSize: 25,
+    fontSize: 28,
+    fontFamily: 'outfit-bold',
     fontWeight: 'bold',
-    margin: 7,
+    marginVertical: 15,
+    color: '#000',
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    borderRadius: 15,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#000000ff',
   },
   searchInput: {
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 10,
-    margin: 10,
+    flex: 1,
     fontSize: 16,
+    color: '#000',
+    fontFamily: 'outfit-medium',
   },
   card: {
     flex: 1,
+    margin: 5,
   },
   noResultText: {
     textAlign: 'center',
     marginTop: 20,
     color: 'gray',
     fontSize: 16,
+    fontFamily: 'outfit',
   },
 });

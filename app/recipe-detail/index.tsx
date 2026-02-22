@@ -1,66 +1,104 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function RecipeDetail() {
   const { recipeData } = useLocalSearchParams();
   const recipe = typeof recipeData === 'string' ? JSON.parse(recipeData) : JSON.parse(recipeData[0]);
+  const router = useRouter();
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#fff' }}>
-      <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>{recipe.recipeName}</Text>
-        <Image
-          source={recipe?.recipeImage && recipe.recipeImage.includes('http')
-            ? { uri: recipe?.recipeImage.replace('ai-guru-lab-images/', 'ai-guru-lab-images%2F') }
-            : require('./../../assets/images/RecipeImage.png')}
-          style={{
-            width: '100%',
-            height: 220,
-            borderRadius: 20,
-            resizeMode: 'cover'
-          }}
-        />
-        <Text style={styles.description}>{recipe.description}</Text>
-
-        <View style={styles.tags}>
-          <Text style={styles.tag}>🔥 {recipe.calories} Cal</Text>
-          <Text style={styles.tag}>⏱️ {recipe.cookTime} Min</Text>
-          <Text style={styles.tag}>👥 Serves {recipe.serveTo}</Text>
+    <View style={styles.mainContainer}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
+        {/* Header Image Section */}
+        <View style={styles.imageContainer}>
+          <Image
+            source={recipe?.recipeImage && (recipe.recipeImage.includes('http') || recipe.recipeImage.startsWith('data:'))
+              ? { uri: recipe?.recipeImage.replace('ai-guru-lab-images/', 'ai-guru-lab-images%2F') }
+              : require('./../../assets/images/RecipeImage.png')}
+            style={styles.image}
+          />
+          <LinearGradient
+            colors={['rgba(0,0,0,0.6)', 'transparent', 'rgba(0,0,0,0.2)']}
+            style={styles.gradientOverlay}
+          />
+          <View style={styles.headerButtons}>
+            <TouchableOpacity onPress={() => router.back()} style={styles.iconButton}>
+              <Ionicons name="arrow-back" size={24} color="white" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.iconButton}>
+              <Ionicons name="share-social-outline" size={24} color="white" />
+            </TouchableOpacity>
+          </View>
         </View>
 
-        <Text style={styles.sectionTitle}>Ingredients</Text>
-        {recipe.ingredients.map((item: any, index: any) => (
-          <Text key={index} style={styles.ingredient}>
-            {item.icon} {item.ingredient} - {item.quantity}
-          </Text>
-        ))}
+        {/* Content Section */}
+        <View style={styles.contentContainer}>
+          <Text style={styles.title}>{recipe.recipeName}</Text>
+          <Text style={styles.description}>{recipe.description}</Text>
 
-        <Text style={styles.sectionTitle}>Steps</Text>
-        {recipe.steps.map((step: any, index: any) => (
-          <View key={index} style={styles.stepBox}>
-            <Text style={styles.stepText}>{step}</Text>
+          {/* Key Stats */}
+          <View style={styles.statsContainer}>
+            <View style={styles.statItem}>
+              <View style={styles.statIconContainer}>
+                <Text style={styles.statIcon}>🔥</Text>
+              </View>
+              <Text style={styles.statLabel}>Calories</Text>
+              <Text style={styles.statValue}>{recipe.calories || 'N/A'}</Text>
+            </View>
+            <View style={styles.divider} />
+            <View style={styles.statItem}>
+              <View style={styles.statIconContainer}>
+                <Text style={styles.statIcon}>⏱️</Text>
+              </View>
+              <Text style={styles.statLabel}>Time</Text>
+              <Text style={styles.statValue}>{recipe.cookTime || 'N/A'}</Text>
+            </View>
+            <View style={styles.divider} />
+            <View style={styles.statItem}>
+              <View style={styles.statIconContainer}>
+                <Text style={styles.statIcon}>👥</Text>
+              </View>
+              <Text style={styles.statLabel}>Servings</Text>
+              <Text style={styles.statValue}>{recipe.serveTo || 'N/A'}</Text>
+            </View>
           </View>
-        ))}
 
-        <View
-          style={{
-            backgroundColor: '#d4f5dd',
-            paddingVertical: 10,
-            paddingHorizontal: 20,
-            borderRadius: 12,
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginTop: 5
-          }}>
-          <Text
-            style={{
-              fontWeight: 'bold',
-              fontSize: 16,
-              color: '#2e7d32'
-            }}>
-            😊 Enjoy your Meal
-          </Text>
+          {/* Ingredients */}
+          <View style={styles.sectionContainer}>
+            <Text style={styles.sectionTitle}>Ingredients</Text>
+            <View style={styles.ingredientsList}>
+              {recipe.ingredients.map((item: any, index: any) => (
+                <View key={index} style={styles.ingredientItem}>
+                  <View style={styles.bulletPoint} />
+                  <Text style={styles.ingredientText}>
+                    {item.ingredient} {item.quantity ? `- ${item.quantity}` : ''}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          </View>
+
+          {/* Steps */}
+          <View style={styles.sectionContainer}>
+            <Text style={styles.sectionTitle}>Instructions</Text>
+            {recipe.steps.map((step: any, index: any) => (
+              <View key={index} style={styles.stepBox}>
+                <View style={styles.stepNumberContainer}>
+                  <Text style={styles.stepNumber}>{index + 1}</Text>
+                </View>
+                <Text style={styles.stepText}>{step}</Text>
+              </View>
+            ))}
+          </View>
+
+          {/* Footer Message */}
+          <View style={styles.footerMessage}>
+            <Text style={styles.footerText}>😊 Enjoy your Meal!</Text>
+          </View>
+
         </View>
       </ScrollView>
     </View>
@@ -68,86 +106,184 @@ export default function RecipeDetail() {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  mainContainer: {
+    flex: 1,
     backgroundColor: '#fff',
+  },
+  imageContainer: {
+    height: 350,
+    width: '100%',
+    position: 'relative',
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  gradientOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 120,
+  },
+  headerButtons: {
+    position: 'absolute',
+    top: 50,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     paddingHorizontal: 20,
-    paddingVertical: 10,
-    paddingBottom: 200,
+  },
+  iconButton: {
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    padding: 10,
+    borderRadius: 50,
+    backdropFilter: 'blur(10px)', // Note: backdropFilter only works on web/some versions, but rgba gives fallback tint
+  },
+  contentContainer: {
+    marginTop: -30,
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    paddingHorizontal: 20,
+    paddingTop: 30,
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#1b1b1b',
-    margin: 8,
-    fontFamily: 'System',
-    letterSpacing: 0.5,
+    fontWeight: '800',
+    color: '#1a1a1a',
+    marginBottom: 10,
+    fontFamily: 'outfit-bold',
+    lineHeight: 34,
   },
   description: {
-    fontSize: 18,
-    fontWeight: '500',
-    color: '#353333ff',
-    marginVertical: 15,
-    lineHeight: 26,
-    fontFamily: 'System',
+    fontSize: 16,
+    color: '#666',
+    lineHeight: 24,
+    marginBottom: 25,
+    fontFamily: 'outfit',
   },
-  tags: {
+  statsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 8,
-    marginBottom: 15,
+    backgroundColor: '#f8f9fa',
+    borderRadius: 15,
+    padding: 15,
+    marginBottom: 25,
+    borderWidth: 1,
+    borderColor: '#eee',
   },
-  tag: {
-    backgroundColor: '#eafaf1',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 20,
-    fontSize: 15,
-    color: '#2e7d32',
-    fontWeight: '500',
-    fontFamily: 'System',
+  statItem: {
+    alignItems: 'center',
+    flex: 1,
   },
-  sectionTitle: {
-    fontSize: 22,
-    fontWeight: '700',
-    marginVertical: 5,
-    color: '#1b1b1b',
-    borderBottomWidth: 2,
-    borderBottomColor: '#d4f5dd',
-    paddingBottom: 4,
-    fontFamily: 'System',
-  },
-  ingredient: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    color: '#444',
-    lineHeight: 22,
-    fontFamily: 'System',
-  },
-  stepBox: {
-    flexDirection: 'row',
-    backgroundColor: '#f1f8f5',
-    borderRadius: 12,
-    padding: 14,
-    marginBottom: 12,
-    alignItems: 'flex-start',
+  statIconContainer: {
+    backgroundColor: 'white',
+    padding: 8,
+    borderRadius: 50,
+    marginBottom: 5,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
     shadowRadius: 3,
     elevation: 2,
   },
-  stepNumber: {
-    fontWeight: 'bold',
+  statIcon: {
+    fontSize: 20,
+  },
+  statLabel: {
+    fontSize: 12,
+    color: '#888',
+    marginBottom: 2,
+    fontFamily: 'outfit',
+  },
+  statValue: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#333',
+    fontFamily: 'outfit-medium',
+  },
+  divider: {
+    width: 1,
+    height: '80%',
+    backgroundColor: '#ddd',
+    alignSelf: 'center',
+  },
+  sectionContainer: {
+    marginBottom: 25,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#1a1a1a',
+    marginBottom: 15,
+    fontFamily: 'outfit-bold',
+  },
+  ingredientsList: {
+    backgroundColor: '#f8f9fa',
+    borderRadius: 15,
+    padding: 15,
+  },
+  ingredientItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 12,
+  },
+  bulletPoint: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#2e7d32',
+    marginTop: 8,
     marginRight: 10,
-    color: '#000',
-    fontFamily: 'System',
+  },
+  ingredientText: {
+    fontSize: 16,
+    color: '#444',
+    lineHeight: 22,
+    flex: 1,
+    fontFamily: 'outfit',
+  },
+  stepBox: {
+    flexDirection: 'row',
+    marginBottom: 20,
+  },
+  stepNumberContainer: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#2e7d32',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 15,
+    marginTop: 0,
+  },
+  stepNumber: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
   stepText: {
+    fontSize: 16,
+    color: '#444',
+    lineHeight: 24,
     flex: 1,
-    fontSize: 15,
-    color: '#333',
-    lineHeight: 22,
-    fontFamily: 'System',
+    fontFamily: 'outfit',
   },
+  footerMessage: {
+    backgroundColor: '#f0f9f4',
+    padding: 15,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: '#d4f5dd',
+  },
+  footerText: {
+    color: '#2e7d32',
+    fontWeight: '600',
+    fontSize: 16,
+  }
 });
