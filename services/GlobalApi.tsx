@@ -4,8 +4,7 @@ import axios from 'axios';
 const genAI = new GoogleGenerativeAI(process.env.EXPO_PUBLIC_GEMINI_KEY as string);
 
 const axiosClient = axios.create({
-  // baseURL: 'https://ai-recipe-generator-admin-w077.onrender.com/api'
-  baseURL: 'http://10.87.56.156:1337/api'
+  baseURL: `${process.env.EXPO_PUBLIC_BACKEND_URL}`
 });
 
 const AiModel = async (prompt: string) => {
