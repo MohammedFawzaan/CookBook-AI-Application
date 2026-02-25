@@ -1,14 +1,26 @@
 import { ScrollView, StyleSheet, View } from 'react-native';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CreateRecipe from "@/components/CreateRecipe";
 import Header from '@/components/Header';
 import CategoryList from '@/components/CategoryList';
 import LatestRecipes from '@/components/LatestRecipes';
 import { useTheme } from '@/context/ThemeContext';
+import { useUser } from '@clerk/clerk-expo';
+import { useClerkAuth } from '@/hooks/useClerkAuth';
 
 export default function Home() {
   const { colors } = useTheme();
+  const { user } = useUser();
+  const { saveUserToDb } = useClerkAuth();
+  const hasSaved = useRef(false);
+
+  useEffect(() => {
+    if (user && !hasSaved.current) {
+      hasSaved.current = true;
+      saveUserToDb(user);
+    }
+  }, [user]);
 
   return (
     <SafeAreaView style={[styles.mainContainer, { backgroundColor: colors.background }]}>

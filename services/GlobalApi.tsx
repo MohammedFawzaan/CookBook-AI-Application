@@ -4,8 +4,8 @@ import axios from 'axios';
 const genAI = new GoogleGenerativeAI(process.env.EXPO_PUBLIC_GEMINI_KEY as string);
 
 const axiosClient = axios.create({
-  baseURL: 'https://ai-recipe-generator-admin-w077.onrender.com/api'
-  // baseURL: 'http://10.138.34.156:1337/api'
+  // baseURL: 'https://ai-recipe-generator-admin-w077.onrender.com/api'
+  baseURL: 'http://10.87.56.156:1337/api'
 });
 
 const AiModel = async (prompt: string) => {
@@ -87,6 +87,8 @@ const GetAllRecipeList = () => axiosClient.get('/recipes?sort[0]=id:desc');
 const GetAllRecipesByLimit = (limit: number) => axiosClient.get('/recipes?sort[0]=id:desc&pagination[start]=1&pagination[limit]=' + limit);
 const GetUserCreatedRecipe = (userEmail: string) => axiosClient.get('/recipes?filters[userEmail][$eq]=' + userEmail + "&sort[0]=id:desc");
 const CreateNewRecipe = (data: any) => axiosClient.post('/recipes', { data: data });
+const CreateUser = (data: any) => axiosClient.post('/user-lists', { data });
+const FindUserByEmail = (email: string) => axiosClient.get('/user-lists?filters[email][$eq]=' + email);
 
 export default {
   AiModel,
@@ -96,5 +98,7 @@ export default {
   GetRecipeByCategory,
   GetAllRecipeList,
   GetAllRecipesByLimit,
-  GetUserCreatedRecipe
+  GetUserCreatedRecipe,
+  CreateUser,
+  FindUserByEmail
 };

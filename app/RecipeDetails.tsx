@@ -6,6 +6,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useUser } from '@clerk/clerk-expo';
+import { shareRecipe } from '@/utils/ShareRecipe';
 
 export default function RecipeDetail() {
   const { recipeData } = useLocalSearchParams();
@@ -48,10 +49,13 @@ export default function RecipeDetail() {
             colors={['transparent', 'rgba(0,0,0,0.15)', colors.background as any]}
             style={styles.bottomGradient}
           />
-          {/* Home button overlay */}
+          {/* Header button overlays */}
           <View style={styles.headerButtons}>
-            <TouchableOpacity onPress={() => router.replace('/(tabs)/Home')} style={styles.iconButton}>
-              <Ionicons name="home" size={24} color="white" />
+            <TouchableOpacity onPress={() => router.back()} style={styles.iconButton}>
+              <Ionicons name="arrow-back" size={24} color="white" />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => shareRecipe(recipe)} style={styles.iconButton}>
+              <Ionicons name="share-social-outline" size={24} color="white" />
             </TouchableOpacity>
           </View>
         </View>
@@ -158,7 +162,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     flexDirection: 'row',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
     paddingHorizontal: 15,
   },
   iconButton: {
