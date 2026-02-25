@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 import { useUser } from '@clerk/clerk-expo';
 import { useTheme } from '@/context/ThemeContext';
 
 export default function RecipeDetailFromHistory() {
   const { recipeData } = useLocalSearchParams();
+  const router = useRouter();
   const recipe = typeof recipeData === 'string' ? JSON.parse(recipeData) : JSON.parse(recipeData[0]);
   const { user } = useUser();
   const { colors } = useTheme();
@@ -46,6 +48,12 @@ export default function RecipeDetailFromHistory() {
             colors={['transparent', 'rgba(0,0,0,0.15)', colors.background as any]}
             style={styles.bottomGradient}
           />
+          {/* Home button overlay */}
+          <View style={styles.headerButtons}>
+            <TouchableOpacity onPress={() => router.replace('/(tabs)/Home')} style={styles.iconButton}>
+              <Ionicons name="home" size={24} color="white" />
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Content Section */}
@@ -144,6 +152,20 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.08)',
   },
   bottomGradient: { position: 'absolute', bottom: 0, left: 0, right: 0, height: 100 },
+  headerButtons: {
+    position: 'absolute',
+    top: 10,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    paddingHorizontal: 15,
+  },
+  iconButton: {
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    padding: 10,
+    borderRadius: 50,
+  },
   contentContainer: {
     marginTop: -20,
     borderTopLeftRadius: 30,
