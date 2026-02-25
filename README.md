@@ -211,45 +211,9 @@ npx expo start
 
 Scan the QR code with the **Expo Go** app on your phone, or press `a` for Android emulator.
 
-### 4. Build APK
-
-```bash
-npx eas-cli build -p android --profile preview
-```
-
-Once the build finishes, EAS will provide a download link for the `.apk` file.
-
 ---
 
-## 🗄️ Strapi Collections Required
-
-| Collection | Fields |
-|---|---|
-| `recipe` | `recipeName`, `description`, `calories`, `cookTime`, `serveTo`, `ingredients` (JSON), `steps` (JSON), `recipeImage`, `userEmail`, `category` |
-| `category` | `name`, `icon` (image) |
-| `user-list` | `name`, `email`, `clerkId`, `credits` (Number, default: 5) |
-
-**Permissions:** In Strapi → Settings → Roles → Public:
-- `recipe`: `find`, `findOne`, `create`
-- `category`: `find`, `findOne`
-- `user-list`: `find`, `create`
-
----
-
-## 🔐 Environment Variables Reference
-
-| Variable | Description |
-|---|---|
-| `EXPO_PUBLIC_GEMINI_KEY` | Google Gemini + Imagen API key |
-| `EXPO_PUBLIC_STRAPI_API_KEY` | Strapi Bearer token for API auth |
-| `EXPO_PUBLIC_BACKEND_URL` | Full Strapi API base URL (e.g. `http://localhost:1337/api`) |
-| `EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk publishable key |
-| `EXPO_PUBLIC_CLOUDINARY_CLOUD_NAME` | Your Cloudinary cloud name |
-| `EXPO_PUBLIC_CLOUDINARY_UPLOAD_PRESET` | Cloudinary unsigned upload preset |
-
----
-
-## 🙏 Credits
+## 🙏 License
 
 Built with ❤️ by **Mohammed Fawzaan**
 
