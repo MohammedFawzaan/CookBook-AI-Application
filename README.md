@@ -1,6 +1,6 @@
 <body>
   <p align="center">
-     <img src="./assets/images/cookbooklogo.png" alt="App Icon" height="120">
+     <img src="./assets/images/icon.png" alt="App Icon" height="120">
   </p>
 
   <h1>🍽️ CookBook - AI Recipe Creator App</h1>

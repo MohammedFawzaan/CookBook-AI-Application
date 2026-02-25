@@ -84,7 +84,7 @@ const GenerateAiImage = async (input: string) => {
 const GetCategory = () => axiosClient.get('/categories?populate=*');
 const GetRecipeByCategory = (category: string) => axiosClient.get('/recipes?filters[category][$eq]=' + category);
 const GetAllRecipeList = () => axiosClient.get('/recipes?sort[0]=id:desc');
-const GetAllRecipesByLimit = (limit: number) => axiosClient.get('/recipes?sort[0]=id:desc&pagination[start]=1&pagination[limit]=' + limit);
+const GetAllRecipesByLimit = (limit: number) => axiosClient.get('/recipes?sort[0]=id:desc&pagination[start]=0&pagination[limit]=' + limit);
 const GetUserCreatedRecipe = (userEmail: string) => axiosClient.get('/recipes?filters[userEmail][$eq]=' + userEmail + "&sort[0]=id:desc");
 const CreateNewRecipe = (data: any) => axiosClient.post('/recipes', { data: data });
 const CreateUser = (data: any) => axiosClient.post('/user-lists', { data });

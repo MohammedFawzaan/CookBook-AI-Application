@@ -9,7 +9,7 @@ export default function Header() {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.container1}>
-        <Image style={styles.image} source={require('./../assets/images/cookbooklogo.png')} />
+        <Image style={styles.image} source={require('./../assets/images/icon.png')} />
         <Text style={[styles.text1, { color: colors.text }]}>CookBook AI</Text>
       </View>
       <View style={styles.container2}>

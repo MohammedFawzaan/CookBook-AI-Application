@@ -3,15 +3,17 @@ import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-nativ
 import GlobalApi from '@/services/GlobalApi'
 import RecipeCardHome from './RecipeCardHome'
 import { useTheme } from '@/context/ThemeContext';
+import { useFocusEffect } from 'expo-router';
 
 export default function LatestRecipes() {
   const [loading, setLoading] = React.useState(true);
   const [recipeList, setRecipeList] = React.useState([]);
   const { colors } = useTheme();
 
-  const GetAllRecipes = async () => {
+  const GetAllRecipes = React.useCallback(async () => {
     try {
-      setLoading(true);
+      if (recipeList.length === 0) setLoading(true);
+
       const result = await GlobalApi.GetAllRecipesByLimit(10);
       setRecipeList(result.data.data);
     } catch (error) {
@@ -19,11 +21,13 @@ export default function LatestRecipes() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [recipeList.length]);
 
-  React.useEffect(() => {
-    GetAllRecipes();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      GetAllRecipes();
+    }, [GetAllRecipes])
+  );
 
   if (loading) {
     return (
@@ -40,7 +44,7 @@ export default function LatestRecipes() {
         data={recipeList}
         horizontal={true}
         showsHorizontalScrollIndicator={false}
-        renderItem={({ item, index }) => (
+        renderItem={({ item }) => (
           <View>
             <RecipeCardHome recipe={item} />
           </View>

@@ -18,8 +18,8 @@ const Categories = [
   { name: 'Salad', imageSource: Salad },
   { name: 'Drink', imageSource: Drink },
   { name: 'Dinner', imageSource: Dinner },
-  { name: 'Dessert', imageSource: Dessert },
   { name: 'Cake', imageSource: Cake },
+  { name: 'Dessert', imageSource: Dessert },
   { name: 'Fastfood', imageSource: Fastfood },
 ];
 

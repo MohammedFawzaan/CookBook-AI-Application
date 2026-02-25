@@ -3,6 +3,7 @@ import { useTheme } from '@/context/ThemeContext';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useUser } from '@clerk/clerk-expo';
@@ -14,6 +15,7 @@ export default function RecipeDetail() {
   const router = useRouter();
   const { user } = useUser();
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
   const [imageLoading, setImageLoading] = useState(true);
 
   const currentUserEmail = user?.primaryEmailAddress?.emailAddress;
@@ -50,12 +52,20 @@ export default function RecipeDetail() {
             style={styles.bottomGradient}
           />
           {/* Header button overlays */}
-          <View style={styles.headerButtons}>
-            <TouchableOpacity onPress={() => router.back()} style={styles.iconButton}>
-              <Ionicons name="arrow-back" size={24} color="white" />
+          <View style={[styles.headerButtons, { top: insets.top > 0 ? insets.top + 5 : 15 }]}>
+            <TouchableOpacity
+              onPress={() => router.back()}
+              style={[styles.iconButton, { backgroundColor: 'rgba(0,0,0,0.45)' }]}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="arrow-back" size={22} color="white" />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => shareRecipe(recipe)} style={styles.iconButton}>
-              <Ionicons name="share-social-outline" size={24} color="white" />
+            <TouchableOpacity
+              onPress={() => shareRecipe(recipe)}
+              style={[styles.iconButton, { backgroundColor: 'rgba(0,0,0,0.45)' }]}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="share-social-outline" size={22} color="white" />
             </TouchableOpacity>
           </View>
         </View>
@@ -158,17 +168,24 @@ const styles = StyleSheet.create({
   bottomGradient: { position: 'absolute', bottom: 0, left: 0, right: 0, height: 100 },
   headerButtons: {
     position: 'absolute',
-    top: 10,
     left: 0,
     right: 0,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 15,
+    paddingHorizontal: 20,
+    zIndex: 10,
   },
   iconButton: {
-    backgroundColor: 'rgba(0,0,0,0.3)',
-    padding: 10,
-    borderRadius: 50,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
   },
   contentContainer: {
     marginTop: -20,
