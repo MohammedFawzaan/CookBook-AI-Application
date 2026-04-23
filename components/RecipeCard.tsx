@@ -8,17 +8,26 @@ export default function RecipeCard({ recipe }: any) {
   const router = useRouter();
   const { colors } = useTheme();
   const [imageLoading, setImageLoading] = useState(true);
+  const [isNavigating, setIsNavigating] = useState(false);
+
+  const handlePress = () => {
+    if (isNavigating) return;
+    setIsNavigating(true);
+
+    router.push({
+      pathname: '/recipe-detail',
+      params: {
+        recipeData: JSON.stringify(recipe)
+      }
+    });
+
+    // Reset lock after a short delay to allow future navigation
+    setTimeout(() => setIsNavigating(false), 1000);
+  };
 
   return (
     <TouchableOpacity
-      onPress={() => {
-        router.push({
-          pathname: '/recipe-detail',
-          params: {
-            recipeData: JSON.stringify(recipe)
-          }
-        });
-      }}
+      onPress={handlePress}
       style={[styles.container, { borderColor: colors.border }]}>
       <View>
         <Image

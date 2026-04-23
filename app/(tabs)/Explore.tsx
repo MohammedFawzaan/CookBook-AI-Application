@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet, FlatList, TextInput } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
+import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import GlobalApi from '@/services/GlobalApi';
 import RecipeCard from '@/components/RecipeCard';
@@ -8,27 +8,80 @@ import { useTheme } from '@/context/ThemeContext';
 
 export default function Explore() {
   const { colors } = useTheme();
-  const [recipeList, setRecipeList] = useState([]);
-  const [filteredRecipes, setFilteredRecipes] = useState([]);
+  const [recipeList, setRecipeList] = useState<any[]>([]);
+  const [filteredRecipes, setFilteredRecipes] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [start, setStart] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const limit = 10;
 
-  const GetAllRecipesList = async () => {
-    setLoading(true);
-    const result = await GlobalApi.GetAllRecipeList();
-    const recipes = result.data.data || [];
-    setRecipeList(recipes);
-    setFilteredRecipes(recipes);
-    setLoading(false);
-  };
+  const GetAllRecipesList = useCallback(async (isRefresh = false) => {
+    try {
+      if (isRefresh) {
+        setLoading(true);
+        setHasMore(true);
+      } else {
+        setIsFetchingMore(true);
+      }
 
-  useEffect(() => {
-    GetAllRecipesList();
+      const currentStart = isRefresh ? 0 : start;
+      const result = await GlobalApi.GetAllRecipeList(currentStart, limit);
+      const recipes = result?.data?.data || [];
+
+      if (recipes.length < limit) {
+        setHasMore(false);
+      } else {
+        setHasMore(true);
+      }
+
+      if (isRefresh) {
+        setRecipeList(recipes);
+        if (searchQuery.trim() !== '') {
+          const filtered = recipes.filter((item: any) =>
+            item?.recipeName?.toLowerCase().includes(searchQuery.toLowerCase())
+          );
+          setFilteredRecipes(filtered);
+        } else {
+          setFilteredRecipes(recipes);
+        }
+        setStart(recipes.length);
+      } else {
+        const newList = [...recipeList, ...recipes];
+        setRecipeList(newList);
+
+        if (searchQuery.trim() !== '') {
+          const filtered = newList.filter((item: any) =>
+            item?.recipeName?.toLowerCase().includes(searchQuery.toLowerCase())
+          );
+          setFilteredRecipes(filtered);
+        } else {
+          setFilteredRecipes(newList);
+        }
+        setStart(prev => prev + recipes.length);
+      }
+    } catch (error) {
+      console.error("Explore Fetch Error:", error);
+    } finally {
+      setLoading(false);
+      setIsFetchingMore(false);
+    }
+  }, [start, recipeList, searchQuery]);
+
+  React.useEffect(() => {
+    GetAllRecipesList(true);
   }, []);
+
+  const loadMore = () => {
+    if (!loading && !isFetchingMore && hasMore) {
+      GetAllRecipesList(false);
+    }
+  };
 
   const handleSearch = (text: string) => {
     setSearchQuery(text);
-    if (!text) {
+    if (!text || text.trim() === '') {
       setFilteredRecipes(recipeList);
       return;
     }
@@ -53,27 +106,49 @@ export default function Explore() {
         />
       </View>
 
-      <FlatList
-        data={filteredRecipes}
-        numColumns={2}
-        refreshing={loading}
-        onRefresh={() => {
-          GetAllRecipesList();
-          setSearchQuery('');
-        }}
-        showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <RecipeCard recipe={item} />
-          </View>
-        )}
-        keyExtractor={(item, index) => index.toString()}
-        ListEmptyComponent={() =>
-          !loading ? (
-            <Text style={[styles.noResultText, { color: colors.textMuted }]}>No recipes found.</Text>
-          ) : null
-        }
-      />
+      {loading && recipeList.length === 0 ? (
+        <ActivityIndicator size="large" color={colors.primary} style={{ marginTop: 50 }} />
+      ) : (
+        <FlatList
+          data={filteredRecipes}
+          numColumns={2}
+          refreshing={loading}
+          onRefresh={() => {
+            setSearchQuery('');
+            GetAllRecipesList(true);
+          }}
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.5}
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: 50 }}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <View style={styles.card}>
+              <RecipeCard recipe={item} />
+            </View>
+          )}
+          keyExtractor={(item, index) => index.toString()}
+          ListFooterComponent={
+            isFetchingMore ? (
+              <ActivityIndicator size="small" color={colors.primary} style={{ marginVertical: 20 }} />
+            ) : null
+          }
+          ListEmptyComponent={() => (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 50 }}>
+              <View style={{ alignItems: 'center' }}>
+                <Text style={[styles.noResultText, { color: colors.textMuted, marginBottom: 10 }]}>
+                  {recipeList.length === 0 ? "Having trouble connecting to the kitchen..." : "No recipes match your search."}
+                </Text>
+                <TouchableOpacity
+                  onPress={() => GetAllRecipesList(true)}
+                  style={{ backgroundColor: colors.primary, padding: 10, borderRadius: 10 }}
+                >
+                  <Text style={{ color: 'white', fontWeight: 'bold' }}>Try Again</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+        />
+      )}
     </SafeAreaView>
   );
 }

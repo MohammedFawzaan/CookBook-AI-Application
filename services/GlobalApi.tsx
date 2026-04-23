@@ -7,6 +7,38 @@ const axiosClient = axios.create({
   baseURL: `${process.env.EXPO_PUBLIC_BACKEND_URL}`
 });
 
+let getTokenFunc: (() => Promise<string | null>) | null = null;
+
+export const setAuthToken = (token: string | null, email?: string | null, getToken?: () => Promise<string | null>) => {
+  if (getToken) {
+    getTokenFunc = getToken;
+  }
+  
+  if (token) {
+    axiosClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  } else {
+    delete axiosClient.defaults.headers.common['Authorization'];
+  }
+
+  if (email) {
+    axiosClient.defaults.headers.common['x-user-email'] = email;
+  } else {
+    delete axiosClient.defaults.headers.common['x-user-email'];
+  }
+};
+
+axiosClient.interceptors.request.use(async (config) => {
+  if (getTokenFunc) {
+    const token = await getTokenFunc();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  }
+  return config;
+}, (error) => {
+  return Promise.reject(error);
+});
+
 const AiModel = async (prompt: string) => {
   const model = genAI.getGenerativeModel({
     model: "gemini-2.5-flash-lite",
@@ -80,24 +112,23 @@ const GenerateAiImage = async (input: string) => {
   }
 };
 
-const GetCategory = () => axiosClient.get('/categories?populate=*');
+const CreateNewRecipe = (data: any) => axiosClient.post('/recipes', { data: data });
 const GetRecipeByCategory = (category: string) => axiosClient.get('/recipes?filters[category][$eq]=' + category);
-const GetAllRecipeList = () => axiosClient.get('/recipes?sort[0]=id:desc');
+const GetAllRecipeList = (start: number = 0, limit: number = 10) => axiosClient.get(`/recipes?sort[0]=id:desc&pagination[start]=${start}&pagination[limit]=${limit}`);
 const GetAllRecipesByLimit = (limit: number) => axiosClient.get('/recipes?sort[0]=id:desc&pagination[start]=0&pagination[limit]=' + limit);
 const GetUserCreatedRecipe = (userEmail: string) => axiosClient.get('/recipes?filters[userEmail][$eq]=' + userEmail + "&sort[0]=id:desc");
-const CreateNewRecipe = (data: any) => axiosClient.post('/recipes', { data: data });
 const CreateUser = (data: any) => axiosClient.post('/user-lists', { data });
 const FindUserByEmail = (email: string) => axiosClient.get('/user-lists?filters[email][$eq]=' + email);
 
 export default {
   AiModel,
   GenerateAiImage,
-  GetCategory,
   CreateNewRecipe,
   GetRecipeByCategory,
   GetAllRecipeList,
   GetAllRecipesByLimit,
   GetUserCreatedRecipe,
   CreateUser,
-  FindUserByEmail
+  FindUserByEmail,
+  setAuthToken
 };

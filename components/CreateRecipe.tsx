@@ -174,9 +174,8 @@ export default function CreateRecipe() {
 
     const SaveToDb = async (content: any, imageUrl: any) => {
         if (cancelledRef.current) return;
-        const { imagePrompt, ...rest } = content;
         const data = {
-            ...rest,
+            ...content,
             recipeImage: typeof imageUrl === 'string' ? imageUrl : '',
             userEmail: user?.primaryEmailAddress?.emailAddress
         };

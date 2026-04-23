@@ -1,33 +1,40 @@
+import React, { useCallback, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
-import React, { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import GlobalApi from '@/services/GlobalApi';
 import { useUser } from '@clerk/clerk-expo';
 import RecipeCard from '@/components/RecipeCard';
 import { useTheme } from '@/context/ThemeContext';
+import { useFocusEffect } from 'expo-router';
 
 export default function Book() {
   const { user } = useUser();
   const { colors } = useTheme();
-  const [recipeList, setRecipeList] = React.useState([]);
+  const [recipeList, setRecipeList] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    user && GetUserRecipeList();
+  const GetUserRecipeList = useCallback(async () => {
+    if (!user) return;
+    try {
+      setLoading(true);
+      const result = await GlobalApi.GetUserCreatedRecipe(user?.primaryEmailAddress?.emailAddress || "");
+      setRecipeList(result.data.data || []);
+    } catch (e) {
+      console.log("Error fetching user recipes:", e);
+    } finally {
+      setLoading(false);
+    }
   }, [user]);
 
-  const GetUserRecipeList = async () => {
-    setLoading(true);
-    const result = await GlobalApi.GetUserCreatedRecipe(user?.primaryEmailAddress?.emailAddress || "");
-    setRecipeList(result.data.data);
-    setLoading(false);
-  };
+  React.useEffect(() => {
+    GetUserRecipeList();
+  }, [GetUserRecipeList]);
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <Text style={[styles.heading, { color: colors.text }]}>CookBook</Text>
       {loading && recipeList.length === 0 ? (
-        <ActivityIndicator size="large" color="#4CAF50" style={{ marginTop: 20 }} />
+        <ActivityIndicator size="large" color={colors.primary} style={{ marginTop: 20 }} />
       ) : (
         <FlatList
           data={recipeList}

@@ -12,16 +12,14 @@ export default function LatestRecipes() {
 
   const GetAllRecipes = React.useCallback(async () => {
     try {
-      if (recipeList.length === 0) setLoading(true);
-
       const result = await GlobalApi.GetAllRecipesByLimit(10);
-      setRecipeList(result.data.data);
+      setRecipeList(result.data.data || []);
     } catch (error) {
       console.log("Failed to fetch recipes : ", error);
     } finally {
       setLoading(false);
     }
-  }, [recipeList.length]);
+  }, []);
 
   useFocusEffect(
     React.useCallback(() => {

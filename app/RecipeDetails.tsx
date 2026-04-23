@@ -119,7 +119,7 @@ export default function RecipeDetail() {
               {recipe.ingredients?.map((item: any, index: any) => (
                 <View key={index} style={styles.ingredientItem}>
                   <Text style={[styles.ingredientText, { color: colors.textSecondary }]}>
-                    {item.icon} {item.ingredient} {item.quantity ? `- ${item.quantity}` : ''}
+                    {item.icon} {item.name || item.ingredient} {item.quantity ? `- ${item.quantity}` : ''}
                   </Text>
                 </View>
               ))}

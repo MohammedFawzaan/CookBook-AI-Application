@@ -71,7 +71,6 @@ export default function Landing() {
                     <TouchableOpacity
                         onPress={async () => {
                             await handleAuth('oauth_google');
-                            router.push('/(tabs)/Home');
                         }}
                         style={styles.button}
                         disabled={loading}>

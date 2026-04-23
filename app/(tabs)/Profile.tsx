@@ -25,7 +25,7 @@ export default function Profile() {
   const handleSignOut = async () => {
     try {
       await signOut();
-      router.replace('/');
+      // The RootLayout's <Redirect href="/" /> will automatically handle navigation
     } catch (err) {
       console.log('Sign out error:', err);
     }

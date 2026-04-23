@@ -39,7 +39,6 @@ export const useClerkAuth = () => {
             const { createdSessionId, setActive } = await startSSOFlow({ strategy });
             if (createdSessionId && setActive) {
                 await setActive({ session: createdSessionId });
-                router.replace("/(tabs)/Home");
             }
         } catch (error) {
             console.log("Error in Auth", error);
